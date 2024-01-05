@@ -1,8 +1,11 @@
+using AutoMapper;
 using DomainLayer.Entities;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
+using RepositoryLayer.UniteOfWork;
+using ServiceLayer.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +67,19 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 #endregion
 
 
+#region AutoMapper
+
+var configuration = new MapperConfiguration(x =>
+{
+    x.AddProfile(new MappingProofile());
+});
+var mapper = configuration.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
+#endregion
+
+
+builder.Services.AddScoped<IUow, Uow>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

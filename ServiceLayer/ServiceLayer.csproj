@@ -17,4 +17,11 @@
     <ProjectReference Include="..\RepositoryLayer\RepositoryLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Utilities\" />
+    <Folder Include="Validations\ProductImage\" />
+    <Folder Include="Validations\Rating\" />
+    <Folder Include="Validations\Subscribe\" />
+  </ItemGroup>
+
 </Project>
