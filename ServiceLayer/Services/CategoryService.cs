@@ -21,7 +21,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<CategoryDto>> GetAllAsync()
         {
-            List<Category> list = await _context.Categories.ToListAsync();
+            var list = await _context.Set<Category>().ToListAsync();
 
             return _mapper.Map<List<CategoryDto>>(list);
         }
@@ -29,7 +29,7 @@ namespace ServiceLayer.Services
 
         public async Task<CategoryDto> GetByIdAsync(int id)
         {
-            Category entity = await _context.Categories.FindAsync(id);
+            Category? entity = await _context.Categories.FindAsync(id);
 
             return _mapper.Map<CategoryDto>(entity);
         }

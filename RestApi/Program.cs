@@ -5,9 +5,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
 using RepositoryLayer.UniteOfWork;
+using ServiceLayer.Extension;
 using ServiceLayer.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Extension
+builder.Services.AddValidation();
+builder.Services.AddServices();
 
 
 builder.Services.AddControllers();
@@ -92,7 +97,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
