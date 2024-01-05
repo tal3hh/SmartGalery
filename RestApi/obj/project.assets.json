@@ -4563,9 +4563,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\RestApi\\RestApi.csproj",
-      "projectName": "RestApi",
-      "projectPath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\RestApi\\RestApi.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\RestApi\\Api.csproj",
+      "projectName": "Api",
+      "projectPath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\RestApi\\Api.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\RestApi\\obj\\",
       "projectStyle": "PackageReference",

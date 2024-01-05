@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VB74bz5AG/NL9RWzChPn1EsKkM9/+aAzoY56gdGHrIUTVTkr/qYxdo02LmkmKVgcXA9AuVHbQ7c/DvY+7RyYoQ==",
+  "dgSpecHash": "uJ2fPIerOt+/ZoVX77qMhvGtiIIVAMkAU0sHkKmqKCbwfBvZxT23/9mDjgKsqV+yzM8SU/AWNkKLWG6UTQUbjQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\RestApi\\RestApi.csproj",
+  "projectFilePath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\RestApi\\Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

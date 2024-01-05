@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryLayer", "Reposito
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{A487B507-F36C-4C5A-A4A3-9F7B15D16E11}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestApi", "RestApi\RestApi.csproj", "{52AB8863-11E4-4C5C-9723-1BF5AE8CEA93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "RestApi\Api.csproj", "{52AB8863-11E4-4C5C-9723-1BF5AE8CEA93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
