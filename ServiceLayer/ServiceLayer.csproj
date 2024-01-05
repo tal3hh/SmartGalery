@@ -18,10 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Utilities\" />
-    <Folder Include="Validations\ProductImage\" />
-    <Folder Include="Validations\Rating\" />
-    <Folder Include="Validations\Subscribe\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
