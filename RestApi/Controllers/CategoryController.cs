@@ -29,6 +29,24 @@ namespace Api.Controllers
 
             await _categoryService.CreateAsync(dto);
 
+            return Ok(dto);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(CategoryUpdateDto dto)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            await _categoryService.UpdateAsync(dto);
+
+            return Ok(dto);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Update(int id)
+        {
+            await _categoryService.RemoveAsync(id);
+
             return Ok();
         }
     }

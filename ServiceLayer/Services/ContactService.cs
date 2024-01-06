@@ -26,7 +26,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<ContactDto>> GetAllAsync()
         {
-            List<Contact> list = await _context.Contacts.ToListAsync();
+            List<Contact>? list = await _context.Contacts.AsNoTracking().ToListAsync();
 
             return _mapper.Map<List<ContactDto>>(list);
         }
@@ -34,7 +34,7 @@ namespace ServiceLayer.Services
 
         public async Task<ContactDto> GetByIdAsync(int id)
         {
-            Contact entity = await _context.Contacts.FindAsync(id);
+            Contact? entity = await _context.Contacts.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<ContactDto>(entity);
         }
@@ -42,7 +42,7 @@ namespace ServiceLayer.Services
 
         public async Task CreateAsync(ContactCreateDto dto)
         {
-            Contact entity = _mapper.Map<Contact>(dto);
+            Contact? entity = _mapper.Map<Contact>(dto);
 
             await _context.Contacts.AddAsync(entity);
             await _context.SaveChangesAsync();
@@ -51,7 +51,7 @@ namespace ServiceLayer.Services
 
         public async Task RemoveAsync(int id)
         {
-            Contact entity = await _context.Contacts.FindAsync(id);
+            Contact? entity = await _context.Contacts.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             if (entity != null)
             {

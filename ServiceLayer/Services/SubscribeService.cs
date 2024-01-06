@@ -26,7 +26,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<SubscribeDto>> GetAllAsync()
         {
-            List<Subscribe> list = await _context.Subscribes.ToListAsync();
+            List<Subscribe> list = await _context.Subscribes.AsNoTracking().ToListAsync();
 
             return _mapper.Map<List<SubscribeDto>>(list);
         }
@@ -34,7 +34,7 @@ namespace ServiceLayer.Services
 
         public async Task<SubscribeDto> GetByIdAsync(int id)
         {
-            Subscribe entity = await _context.Subscribes.FindAsync(id);
+            Subscribe? entity = await _context.Subscribes.AsNoTracking().SingleOrDefaultAsync(x=> x.Id == id);
 
             return _mapper.Map<SubscribeDto>(entity);
         }
@@ -42,7 +42,7 @@ namespace ServiceLayer.Services
 
         public async Task CreateAsync(SubscribeCreateDto dto)
         {
-            Subscribe entity = _mapper.Map<Subscribe>(dto);
+            Subscribe? entity = _mapper.Map<Subscribe>(dto);
 
             await _context.Subscribes.AddAsync(entity);
             await _context.SaveChangesAsync();
@@ -51,7 +51,7 @@ namespace ServiceLayer.Services
 
         public async Task RemoveAsync(int id)
         {
-            Subscribe entity = await _context.Subscribes.FindAsync(id);
+            Subscribe? entity = await _context.Subscribes.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             if (entity != null)
             {

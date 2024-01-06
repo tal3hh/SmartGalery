@@ -21,7 +21,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<CommentDto>> GetAllAsync()
         {
-            List<Comment> list = await _context.Comments.ToListAsync();
+            List<Comment> list = await _context.Comments.AsNoTracking().ToListAsync();
 
             return _mapper.Map<List<CommentDto>>(list);
         }
@@ -29,7 +29,7 @@ namespace ServiceLayer.Services
 
         public async Task<CommentDto> GetByIdAsync(int id)
         {
-            Comment entity = await _context.Comments.FindAsync(id);
+            Comment? entity = await _context.Comments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<CommentDto>(entity);
         }
@@ -46,7 +46,7 @@ namespace ServiceLayer.Services
 
         public async Task RemoveAsync(int id)
         {
-            Comment entity = await _context.Comments.FindAsync(id);
+            Comment? entity = await _context.Comments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             if (entity != null)
             {

@@ -26,7 +26,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<ProductImageDto>> GetAllAsync()
         {
-            List<ProductImage> list = await _context.ProductImages.ToListAsync();
+            List<ProductImage> list = await _context.ProductImages.AsNoTracking().ToListAsync();
 
             return _mapper.Map<List<ProductImageDto>>(list);
         }
@@ -34,7 +34,7 @@ namespace ServiceLayer.Services
 
         public async Task<ProductImageDto> GetByIdAsync(int id)
         {
-            ProductImage entity = await _context.ProductImages.FindAsync(id);
+            ProductImage? entity = await _context.ProductImages.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<ProductImageDto>(entity);
         }
@@ -42,7 +42,7 @@ namespace ServiceLayer.Services
 
         public async Task CreateAsync(ProductImageCreateDto dto)
         {
-            ProductImage entity = _mapper.Map<ProductImage>(dto);
+            ProductImage? entity = _mapper.Map<ProductImage>(dto);
 
             await _context.ProductImages.AddAsync(entity);
             await _context.SaveChangesAsync();
@@ -51,7 +51,7 @@ namespace ServiceLayer.Services
 
         public async Task UpdateAsync(ProductImageUpdateDto dto)
         {
-            ProductImage unchanged = await _context.ProductImages.FindAsync(dto.Id);
+            ProductImage? unchanged = await _context.ProductImages.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
 
             if (unchanged != null)
             {
@@ -64,7 +64,7 @@ namespace ServiceLayer.Services
 
         public async Task RemoveAsync(int id)
         {
-            ProductImage entity = await _context.ProductImages.FindAsync(id);
+            ProductImage? entity = await _context.ProductImages.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             if (entity != null)
             {

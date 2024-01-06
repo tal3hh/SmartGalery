@@ -26,7 +26,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<ProductDetailDto>> GetAllAsync()
         {
-            List<ProductDetail> list = await _context.ProductDetails.ToListAsync();
+            List<ProductDetail> list = await _context.ProductDetails.AsNoTracking().ToListAsync();
 
             return _mapper.Map<List<ProductDetailDto>>(list);
         }
@@ -34,7 +34,7 @@ namespace ServiceLayer.Services
 
         public async Task<ProductDetailDto> GetByIdAsync(int id)
         {
-            ProductDetail entity = await _context.ProductDetails.FindAsync(id);
+            ProductDetail? entity = await _context.ProductDetails.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<ProductDetailDto>(entity);
         }
@@ -51,7 +51,7 @@ namespace ServiceLayer.Services
 
         public async Task UpdateAsync(ProductDetailUpdateDto dto)
         {
-            ProductDetail unchanged = await _context.ProductDetails.FindAsync(dto.Id);
+            ProductDetail? unchanged = await _context.ProductDetails.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
 
             if (unchanged != null)
             {
@@ -64,7 +64,7 @@ namespace ServiceLayer.Services
 
         public async Task RemoveAsync(int id)
         {
-            ProductDetail entity = await _context.ProductDetails.FindAsync(id);
+            ProductDetail? entity = await _context.ProductDetails.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             if (entity != null)
             {

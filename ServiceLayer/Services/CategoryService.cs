@@ -21,7 +21,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<CategoryDto>> GetAllAsync()
         {
-            var list = await _context.Set<Category>().ToListAsync();
+            var list = await _context.Set<Category>().AsNoTracking().ToListAsync();
 
             return _mapper.Map<List<CategoryDto>>(list);
         }
@@ -29,7 +29,7 @@ namespace ServiceLayer.Services
 
         public async Task<CategoryDto> GetByIdAsync(int id)
         {
-            Category? entity = await _context.Categories.FindAsync(id);
+            Category? entity = await _context.Categories.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<CategoryDto>(entity);
         }
@@ -46,7 +46,7 @@ namespace ServiceLayer.Services
 
         public async Task UpdateAsync(CategoryUpdateDto dto)
         {
-            Category unchanged = await _context.Categories.FindAsync(dto.Id);
+            Category? unchanged = await _context.Categories.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
 
             if (unchanged != null)
             {
@@ -59,7 +59,7 @@ namespace ServiceLayer.Services
 
         public async Task RemoveAsync(int id)
         {
-            Category entity = await _context.Categories.FindAsync(id);
+            Category? entity = await _context.Categories.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
             if (entity != null)
             {
