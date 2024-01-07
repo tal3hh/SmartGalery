@@ -12,6 +12,8 @@ namespace DomainLayer.Entities
         public string? Fullname { get; set; }
         public DateTime CreateDate { get; set; }
 
-        public Rating? Rating { get; set; }
+        public List<Rating>? Ratings { get; set; }
+        public List<Order>? Orders { get; set; }
+        public List<Comment>? Comments { get; set; }
     }
 }

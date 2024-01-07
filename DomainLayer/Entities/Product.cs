@@ -17,7 +17,8 @@ namespace DomainLayer.Entities
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
 
-        public Rating? Rating { get; set; }
+        public List<OrderItem>? OrderItems { get; set; }
+        public List<Rating>? Ratings { get; set; }
         public List<ProductImage>? ProductImages { get; set; }
         public List<Comment>? Comments { get; set; }
         public List<ProductDetail>? ProductDetails { get; set; }

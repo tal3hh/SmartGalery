@@ -19,10 +19,20 @@ namespace RepositoryLayer.Contexts
         {
             modelBuilder.Entity<Product>().HasOne(x => x.Category).WithMany(x => x.Products).HasForeignKey(x => x.CategoryId);
             modelBuilder.Entity<ProductImage>().HasOne(x => x.Product).WithMany(x => x.ProductImages).HasForeignKey(x => x.ProductId);
+
             modelBuilder.Entity<Comment>().HasOne(x => x.Product).WithMany(x => x.Comments).HasForeignKey(x => x.ProductId);
+            modelBuilder.Entity<Comment>().HasOne(x => x.AppUser).WithMany(x => x.Comments).HasForeignKey(x => x.AppUserId);
+
             modelBuilder.Entity<ProductDetail>().HasOne(x => x.Product).WithMany(x => x.ProductDetails).HasForeignKey(x => x.ProductId);
-            modelBuilder.Entity<Rating>().HasOne(x => x.Product).WithOne(x => x.Rating).HasForeignKey<Rating>(x => x.ProductId);
-            modelBuilder.Entity<Rating>().HasOne(x => x.AppUser).WithOne(x => x.Rating).HasForeignKey<Rating>(x => x.AppUserId);
+
+            modelBuilder.Entity<Rating>().HasOne(x => x.Product).WithMany(x => x.Ratings).HasForeignKey(x => x.ProductId);
+            modelBuilder.Entity<Rating>().HasOne(x => x.AppUser).WithMany(x => x.Ratings).HasForeignKey(x => x.AppUserId);
+
+            modelBuilder.Entity<Order>().HasOne(x => x.AppUser).WithMany(x => x.Orders).HasForeignKey(x => x.AppUserId);
+
+            modelBuilder.Entity<OrderItem>().HasOne(x => x.Order).WithMany(x => x.OrderItems).HasForeignKey(x => x.OrderId);
+            modelBuilder.Entity<OrderItem>().HasOne(x => x.Product).WithMany(x => x.OrderItems).HasForeignKey(x => x.ProductId);
+
             base.OnModelCreating(modelBuilder);
         }
 
