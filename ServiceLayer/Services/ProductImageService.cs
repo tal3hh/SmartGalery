@@ -51,12 +51,11 @@ namespace ServiceLayer.Services
 
         public async Task UpdateAsync(ProductImageUpdateDto dto)
         {
-            ProductImage? unchanged = await _context.ProductImages.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
-
-            if (unchanged != null)
+            ProductImage? DBentity = await _context.ProductImages.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
+            if (DBentity != null)
             {
                 ProductImage entity = _mapper.Map<ProductImage>(dto);
-                _context.Entry(unchanged).CurrentValues.SetValues(entity);
+                _context.ProductImages.Update(entity);
                 await _context.SaveChangesAsync();
             }
         }

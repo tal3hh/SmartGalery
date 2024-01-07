@@ -12,10 +12,13 @@ namespace ServiceLayer.Validations
     {
         public ContactCreateValidation()
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage("Ad boş olamaz.");
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Ad boş olamaz.")
+                .NotNull().WithMessage("Ad boş olamaz.");
             RuleFor(x => x.Email).NotEmpty().WithMessage("E-posta boş olamaz.")
+                .NotNull().WithMessage("E-posta boş olamaz.")
                 .EmailAddress().WithMessage("Geçerli bir e-posta adresi giriniz.");
-            RuleFor(x => x.Number).NotEmpty().WithMessage("Numara boş olamaz.");
+            RuleFor(x => x.Number).NotEmpty().WithMessage("Numara boş olamaz.")
+                .NotNull().WithMessage("Numara boş olamaz.");
         }
     }
 }

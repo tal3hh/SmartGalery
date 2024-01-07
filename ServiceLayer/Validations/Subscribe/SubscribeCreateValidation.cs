@@ -12,7 +12,9 @@ namespace ServiceLayer.Validations
     {
         public SubscribeCreateValidation()
         {
-            RuleFor(x => x.Email).NotEmpty().WithMessage("E-posta boş olamaz.")
+            RuleFor(x => x.Email)
+                .NotEmpty().WithMessage("E-posta boş olamaz.")
+                .NotNull().WithMessage("E-posta boş olamaz.")
                 .EmailAddress().WithMessage("Geçerli bir e-posta adresi giriniz.");
         }
     }

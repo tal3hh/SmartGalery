@@ -18,10 +18,12 @@ namespace ServiceLayer.Validations
 
             RuleFor(rating => rating.ProductId)
                 .NotEmpty().WithMessage("Məhsul ID boş ola bilməz")
+                .NotNull().WithMessage("Məhsul ID boş ola bilməz")
                 .GreaterThan(0).WithMessage("Məhsul ID 0-dan böyük olmalıdır");
 
             RuleFor(rating => rating.AppUserId)
-                .NotEmpty().WithMessage("İstifadəçi ID boş ola bilməz");
+                .NotEmpty().WithMessage("İstifadəçi ID boş ola bilməz")
+                .NotNull().WithMessage("İstifadəçi ID boş ola bilməz");
         }
     }
 }

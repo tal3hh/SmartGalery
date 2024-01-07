@@ -11,6 +11,7 @@ namespace ServiceLayer.Services.Interfaces
     {
         Task<List<CategoryDto>> GetAllAsync();
         Task<CategoryDto> GetByIdAsync(int id);
+        Task<List<CategoryDto>> GetByNameAsync(string name);
         Task CreateAsync(CategoryCreateDto dto);
         Task UpdateAsync(CategoryUpdateDto dto);
         Task RemoveAsync(int id);

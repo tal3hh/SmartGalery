@@ -3,6 +3,7 @@ using DomainLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.About;
+using ServiceLayer.Dtos.Category;
 using ServiceLayer.Services.Interfaces;
 
 namespace ServiceLayer.Services
@@ -30,8 +31,15 @@ namespace ServiceLayer.Services
         public async Task<AboutDto> GetByIdAsync(int id)
         {
             About? entity = await _context.Abouts.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
-
+            
             return _mapper.Map<AboutDto>(entity);
+        }
+
+        public async Task<List<AboutDto>> GetByNameAsync(string name)
+        {
+            List<About>? entity = await _context.Abouts.AsNoTracking().Where(x => x.Title == name).ToListAsync();
+
+            return _mapper.Map<List<AboutDto>>(entity);
         }
 
 
@@ -46,12 +54,11 @@ namespace ServiceLayer.Services
 
         public async Task UpdateAsync(AboutUpdateDto dto)
         {
-            About? unchanged = await _context.Abouts.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
-
-            if (unchanged != null)
+            About? DBentity = await _context.Abouts.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
+            if(DBentity != null)
             {
                 About entity = _mapper.Map<About>(dto);
-                _context.Entry(unchanged).CurrentValues.SetValues(entity);
+                _context.Abouts.Update(entity);
                 await _context.SaveChangesAsync();
             }
         }

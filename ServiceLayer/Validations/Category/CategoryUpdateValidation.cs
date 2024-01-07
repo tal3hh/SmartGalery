@@ -13,7 +13,8 @@ namespace ServiceLayer.Validations
         public CategoryUpdateValidation()
         {
             RuleFor(x => x.Id).NotNull().WithMessage("Id mütləqdir.");
-            RuleFor(x => x.Name).NotNull().WithMessage("Ad mütləqdir.");
+            RuleFor(x => x.Name).NotNull().WithMessage("Ad mütləqdir.")
+                .NotEmpty().WithMessage("Ad mütləqdir.");
         }
     }
 }

@@ -12,7 +12,8 @@ namespace ServiceLayer.Validations
     {
         public CategoryCreateValidation()
         {
-            RuleFor(x => x.Name).NotNull().WithMessage("Ad mütləqdir.");
+            RuleFor(x => x.Name).NotNull().WithMessage("Ad mütləqdir.")
+                .NotEmpty().WithMessage("Ad mütləqdir.");
         }
     }
 }

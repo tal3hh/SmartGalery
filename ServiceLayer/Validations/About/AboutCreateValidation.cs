@@ -12,8 +12,10 @@ namespace ServiceLayer.Validations
     {
         public AboutCreateValidation()
         {
-            RuleFor(x => x.Title).NotNull().WithMessage("Başlıq mütləqdir.");
-            RuleFor(x => x.Description).NotNull().WithMessage("Açıqlama mütləqdir.");
+            RuleFor(x => x.Title).NotNull().WithMessage("Başlıq mütləqdir.")
+                .NotEmpty().WithMessage("Başlıq mütləqdir.");
+            RuleFor(x => x.Description).NotNull().WithMessage("Açıqlama mütləqdir.")
+                .NotEmpty().WithMessage("Açıqlama mütləqdir.");
         }
     }
 }

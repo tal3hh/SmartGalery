@@ -34,6 +34,13 @@ namespace ServiceLayer.Services
             return _mapper.Map<CategoryDto>(entity);
         }
 
+        public async Task<List<CategoryDto>> GetByNameAsync(string name)
+        {
+            List<Category>? entity = await _context.Categories.AsNoTracking().Where(x => x.Name == name).ToListAsync();
+
+            return _mapper.Map<List<CategoryDto>>(entity);
+        }
+
 
         public async Task CreateAsync(CategoryCreateDto dto)
         {
@@ -46,12 +53,11 @@ namespace ServiceLayer.Services
 
         public async Task UpdateAsync(CategoryUpdateDto dto)
         {
-            Category? unchanged = await _context.Categories.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
-
-            if (unchanged != null)
+            Category? DBentity = await _context.Categories.AsNoTracking().SingleOrDefaultAsync(x => x.Id == dto.Id);
+            if (DBentity != null)
             {
                 Category entity = _mapper.Map<Category>(dto);
-                _context.Entry(unchanged).CurrentValues.SetValues(entity);
+                _context.Categories.Update(entity);
                 await _context.SaveChangesAsync();
             }
         }

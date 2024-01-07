@@ -15,6 +15,7 @@ namespace ServiceLayer.Validations
         {
             RuleFor(detail => detail.Description)
            .NotEmpty().WithMessage("Məlumat boş ola bilməz")
+           .NotNull().WithMessage("Məlumat boş ola bilməz")
            .MaximumLength(250).WithMessage("Məlumat 250 simvoldan çox ola bilməz");
 
             RuleFor(detail => detail.ProductId)

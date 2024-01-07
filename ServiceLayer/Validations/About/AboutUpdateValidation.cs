@@ -13,8 +13,10 @@ namespace ServiceLayer.Validations
         public AboutUpdateValidation()
         {
             RuleFor(x => x.Id).NotNull().WithMessage("ID mütləqdir.");
-            RuleFor(x => x.Title).NotNull().WithMessage("Başlıq mütləqdir.");
-            RuleFor(x => x.Description).NotNull().WithMessage("Açıqlama mütləqdir.");
+            RuleFor(x => x.Title).NotNull().WithMessage("Başlıq mütləqdir.")
+                .NotEmpty().WithMessage("Başlıq mütləqdir.");
+            RuleFor(x => x.Description).NotNull().WithMessage("Açıqlama mütləqdir.")
+                .NotEmpty().WithMessage("Açıqlama mütləqdir.");
         }
     }
 }

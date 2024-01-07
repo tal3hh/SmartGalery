@@ -1,4 +1,5 @@
 ﻿using ServiceLayer.Dtos.About;
+using ServiceLayer.Dtos.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace ServiceLayer.Services.Interfaces
     {
         Task<List<AboutDto>> GetAllAsync();
         Task<AboutDto> GetByIdAsync(int id);
+        Task<List<AboutDto>> GetByNameAsync(string name);
         Task CreateAsync(AboutCreateDto dto);
         Task UpdateAsync(AboutUpdateDto dto);
         Task RemoveAsync(int id);

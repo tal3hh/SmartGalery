@@ -14,10 +14,12 @@ namespace ServiceLayer.Validations
         {
             RuleFor(image => image.Path)
             .NotEmpty().WithMessage("Şəkil yol boş ola bilməz")
+            .NotNull().WithMessage("Şəkil yol boş ola bilməz")
             .MaximumLength(255).WithMessage("Şəkil yolunun uzunluğu 255 simvoldan çox ola bilməz");
 
             RuleFor(detail => detail.ProductId)
                 .NotEmpty().WithMessage("Məhsul ID boş ola bilməz")
+                .NotNull().WithMessage("Məhsul ID boş ola bilməz")
                 .GreaterThan(0).WithMessage("Məhsul ID 0-dan böyük olmalıdır");
         }
     }

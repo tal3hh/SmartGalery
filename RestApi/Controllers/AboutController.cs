@@ -1,35 +1,34 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using ServiceLayer.Dtos.Category;
+﻿using Microsoft.AspNetCore.Mvc;
+using ServiceLayer.Dtos.About;
 using ServiceLayer.Services.Interfaces;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class AboutController : ControllerBase
     {
-        readonly ICategoryService _categoryService;
+        readonly IAboutService _AboutService;
 
-        public CategoryController(ICategoryService categoryService)
+        public AboutController(IAboutService AboutService)
         {
-            _categoryService = categoryService;
+            _AboutService = AboutService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _categoryService.GetAllAsync());
+            return Ok(await _AboutService.GetAllAsync());
         }
 
         [HttpGet("{name}")]
         public async Task<IActionResult> Search(string name)
         {
-            return Ok(await _categoryService.GetByNameAsync(name));
+            return Ok(await _AboutService.GetByNameAsync(name));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CategoryCreateDto dto)
+        public async Task<IActionResult> Create(AboutCreateDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -39,13 +38,13 @@ namespace Api.Controllers
                 return BadRequest(errors);
             }
 
-            await _categoryService.CreateAsync(dto);
+            await _AboutService.CreateAsync(dto);
 
             return Ok(dto);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(CategoryUpdateDto dto)
+        public async Task<IActionResult> Update(AboutUpdateDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -55,7 +54,7 @@ namespace Api.Controllers
                 return BadRequest(errors);
             }
 
-            await _categoryService.UpdateAsync(dto);
+            await _AboutService.UpdateAsync(dto);
 
             return Ok(dto);
         }
@@ -63,7 +62,7 @@ namespace Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _categoryService.RemoveAsync(id);
+            await _AboutService.RemoveAsync(id);
 
             return Ok();
         }
