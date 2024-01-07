@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Product;
 using ServiceLayer.Services.Interfaces;
+using ServiceLayer.Utilities;
+using ServiceLayer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,73 @@ namespace ServiceLayer.Services
             var list = await _context.Set<Product>().AsNoTracking().ToListAsync();
 
             return _mapper.Map<List<ProductDto>>(list);
+        }
+
+        public async Task<Paginate<ProductDto>> ProductPagineList(PaginationVM vm)
+        {
+            var entities = from b in _context.Products?
+                           .Where(x => x.CategoryId == vm.CategoryId)
+                           .Include(x => x.Category)
+                           select b;
+            //Sort Filter
+            //switch (sort)
+            //{
+            //    case "price_desc":
+            //        entities = entities.OrderByDescending(x => x.Price);
+            //        break;
+            //    case "price_asc":
+            //        entities = entities.OrderBy(x => x.Price);
+            //        break;
+            //    case "name_desc":
+            //        entities = entities.OrderByDescending(x => x.Name);
+            //        break;
+            //    default:
+            //        entities = entities.OrderBy(x => x.Name);
+            //        break;
+            //}
+
+            //Paginate
+            var allCount = await entities.CountAsync();
+            var Totalpage = (int)Math.Ceiling((decimal)allCount / vm.Take);
+
+            var entities2 = await entities.Skip((vm.Page - 1) * vm.Take).Take(vm.Take).ToListAsync();
+
+            List<ProductDto> dto = _mapper.Map<List<ProductDto>>(entities2);
+
+            var result = new Paginate<ProductDto>(dto, vm.Take, Totalpage);
+
+            return result;
+        }
+
+        private async Task<List<ProductDto>> GetProducts(ProductFilterVM filter)
+        {
+            List<Product> entity = await _context.Products.Where(p =>
+                    (p.CategoryId == filter.CategoryId) &&
+                    (p.Price >= filter.PriceMIN && p.Price <= filter.PriceMAX) &&
+                    (p.Color == filter.Color)
+                ).ToListAsync();
+
+            return _mapper.Map<List<ProductDto>>(entity);
+        }
+
+        public async Task<Paginate<ProductDto>> GetProductsAsync(ProductFilterVM filter)
+        {
+            List<ProductDto> filteredProducts = await GetProducts(filter);
+
+            // Pagination 
+            int pageSize = filter.Take;
+            int totalProducts = filteredProducts.Count;
+            int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+
+            int currentPage = filter.Page;
+            List<ProductDto> pagedProducts = filteredProducts
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            
+            Paginate<ProductDto> paginateResult = new Paginate<ProductDto>(pagedProducts, currentPage, totalPages);
+            return await Task.FromResult(paginateResult);
         }
 
 

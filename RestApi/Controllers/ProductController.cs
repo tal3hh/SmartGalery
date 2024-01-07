@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Dtos.Product;
 using ServiceLayer.Services.Interfaces;
+using ServiceLayer.ViewModels;
 
 namespace Api.Controllers
 {
@@ -19,6 +20,18 @@ namespace Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _ProductService.GetAllAsync());
+        }
+
+        [HttpPost("Pagination")]
+        public async Task<IActionResult> GetAllProduct(PaginationVM pagineVM)
+        {
+            return Ok(await _ProductService.ProductPagineList(pagineVM));
+        }
+
+        [HttpPost("Pagination2")]
+        public async Task<IActionResult> GetAllProduct2(ProductFilterVM pagineVM)
+        {
+            return Ok(await _ProductService.GetProductsAsync(pagineVM));
         }
 
         [HttpPost]

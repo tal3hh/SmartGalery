@@ -28,6 +28,7 @@ namespace ServiceLayer.Extension
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IContactService, ContactService>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductDetailService, ProductDetailService>();
             services.AddScoped<IProductImageService, ProductImageService>();
             services.AddScoped<ISubscribeService, SubscribeService>();

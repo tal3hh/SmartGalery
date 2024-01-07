@@ -15,5 +15,6 @@ namespace ServiceLayer.Dtos.Comment
         public string? Message { get; set; }
 
         public int ProductId { get; set; }
+        public string? AppUserId { get; set; }
     }
 }
