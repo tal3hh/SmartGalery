@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceLayer.Dtos.About;
+using ServiceLayer.Dtos.Brand;
 using ServiceLayer.Dtos.Category;
 using ServiceLayer.Dtos.Comment;
 using ServiceLayer.Dtos.Contact;
@@ -10,11 +11,7 @@ using ServiceLayer.Dtos.ProductImage;
 using ServiceLayer.Dtos.Rating;
 using ServiceLayer.Dtos.Subscribe;
 using ServiceLayer.Validations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ServiceLayer.Validations.Brand;
 
 namespace ServiceLayer.Extension
 {
@@ -24,6 +21,9 @@ namespace ServiceLayer.Extension
         {
             services.AddScoped<IValidator<AboutCreateDto>, AboutCreateValidation>();
             services.AddScoped<IValidator<AboutUpdateDto>, AboutUpdateValidation>();
+
+            services.AddScoped<IValidator<BrandCreateDto>, BrandCreateValidation>();
+            services.AddScoped<IValidator<BrandUpdateDto>, BrandUpdateValidation>();
 
             services.AddScoped<IValidator<ProductCreateDto>, ProductCreateValidation>();
             services.AddScoped<IValidator<ProductUpdateDto>, ProductUpdateValidation>();

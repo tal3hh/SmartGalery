@@ -22,16 +22,16 @@ namespace Api.Controllers
             return Ok(await _ProductService.GetAllAsync());
         }
 
-        [HttpPost("Pagination")]
-        public async Task<IActionResult> GetAllProduct(PaginationVM pagineVM)
+        [HttpPost("DashProductSearch")]
+        public async Task<IActionResult> DashProductSearch(ProductFilterVM pagineVM)
         {
-            return Ok(await _ProductService.ProductPagineList(pagineVM));
+            return Ok(await _ProductService.DashProductSearch(pagineVM));
         }
 
-        [HttpPost("Pagination2")]
-        public async Task<IActionResult> GetAllProduct2(ProductFilterVM pagineVM)
+        [HttpPost("HomeFilter")]
+        public async Task<IActionResult> HomeFilterList(ProductFilterVM pagineVM)
         {
-            return Ok(await _ProductService.GetProductsAsync(pagineVM));
+            return Ok(await _ProductService.HomeProductFilter(pagineVM));
         }
 
         [HttpPost]

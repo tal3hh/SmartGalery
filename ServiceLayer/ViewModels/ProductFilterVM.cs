@@ -8,7 +8,8 @@ namespace ServiceLayer.ViewModels
 {
     public class ProductFilterVM
     {
-        public int CategoryId { get; set; }
+        public string? Search { get; set; }
+        public List<int>? CategoryId { get; set; }
         public decimal PriceMIN { get; set; }
         public decimal PriceMAX { get; set; }
         public string? Color { get; set; }

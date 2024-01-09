@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DomainLayer.Entities;
 using ServiceLayer.Dtos.About;
+using ServiceLayer.Dtos.Brand;
 using ServiceLayer.Dtos.Category;
 using ServiceLayer.Dtos.Comment;
 using ServiceLayer.Dtos.Contact;
@@ -24,6 +25,10 @@ namespace ServiceLayer.Mapping
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Category, CategoryCreateDto>().ReverseMap();
             CreateMap<Category, CategoryUpdateDto>().ReverseMap();
+
+            CreateMap<Brand, BrandDto>().ReverseMap();
+            CreateMap<Brand, BrandCreateDto>().ReverseMap();
+            CreateMap<Brand, BrandUpdateDto>().ReverseMap();
 
             CreateMap<About, AboutDto>().ReverseMap();
             CreateMap<About, AboutCreateDto>().ReverseMap();

@@ -25,6 +25,7 @@ namespace ServiceLayer.Extension
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IAboutService, AboutService>();
+            services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IContactService, ContactService>();

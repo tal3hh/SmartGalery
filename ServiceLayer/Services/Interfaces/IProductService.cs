@@ -11,9 +11,11 @@ namespace ServiceLayer.Services.Interfaces
 {
     public interface IProductService
     {
+        Task<Paginate<ProductDto>> DashProductSearch(ProductFilterVM filter);
+        Task<List<ProductDto>> HomeProductFilter(ProductFilterVM filter);
+        Task<List<ProductDto>> NewProductList();
+        Task<ProductDto> ProductDetailPage(int id);
         Task<List<ProductDto>> GetAllAsync();
-        Task<Paginate<ProductDto>> ProductPagineList(PaginationVM vm);
-        Task<Paginate<ProductDto>> GetProductsAsync(ProductFilterVM filter);
         Task<ProductDto> GetByIdAsync(int id);
         Task CreateAsync(ProductCreateDto dto);
         Task UpdateAsync(ProductUpdateDto dto);
