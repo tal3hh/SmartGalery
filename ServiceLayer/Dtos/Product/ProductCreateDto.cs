@@ -11,6 +11,7 @@ namespace ServiceLayer.Dtos.Product
         public string? Name { get; set; }
         public decimal OldPrice { get; set; }
         public decimal Price { get; set; }
+        public int Count { get; set; }
         public bool IsStock { get; set; }
         public string? Color { get; set; }
         public string? About { get; set; }

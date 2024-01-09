@@ -4,20 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServiceLayer.Dtos.Product
+namespace ServiceLayer.Dtos.Product.Home
 {
-    public class ProductUpdateDto
+    public class HomeProductDto
     {
         public int Id { get; set; }
         public string? Name { get; set; }
         public decimal OldPrice { get; set; }
         public decimal Price { get; set; }
-        public int Count { get; set; }
         public bool IsStock { get; set; }
-        public string? Color { get; set; }
         public string? About { get; set; }
-
-        public int CategoryId { get; set; }
-        public int BrandId { get; set; }
+        public List<string>? ProductImages { get; set; }
+        public int commentCount { get; set; }
+        public decimal Rating { get; set; }
     }
 }

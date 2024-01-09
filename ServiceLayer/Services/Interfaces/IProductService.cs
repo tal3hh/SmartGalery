@@ -1,4 +1,6 @@
 ﻿using ServiceLayer.Dtos.Product;
+using ServiceLayer.Dtos.Product.Dash;
+using ServiceLayer.Dtos.Product.Home;
 using ServiceLayer.Utilities;
 using ServiceLayer.ViewModels;
 using System;
@@ -11,10 +13,16 @@ namespace ServiceLayer.Services.Interfaces
 {
     public interface IProductService
     {
-        Task<Paginate<ProductDto>> DashProductSearch(ProductFilterVM filter);
-        Task<List<ProductDto>> HomeProductFilter(ProductFilterVM filter);
-        Task<List<ProductDto>> NewProductList();
-        Task<ProductDto> ProductDetailPage(int id);
+        //Dash
+        Task<Paginate<DashProductDto>> DashProductSearch(DashProductSearchVM vm);
+
+        //Home
+        Task<List<HomeProductDto>> HomeProductFilter(HomeProductFilterVM vm);
+        Task<List<HomeProductDto>> HomeProductBrandFilter(HomeProBrandFilter vm);
+        Task<List<HomeProductDto>> NewProductList();
+        Task<HomeProDetailDto> ProductDetailPage(int productId);
+
+        //Crud
         Task<List<ProductDto>> GetAllAsync();
         Task<ProductDto> GetByIdAsync(int id);
         Task CreateAsync(ProductCreateDto dto);

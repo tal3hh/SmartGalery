@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace ServiceLayer.ViewModels
 {
-    public class PaginationVM
+    public class HomeProductFilterVM
     {
-        public int CategoryId { get; set; }
+        public List<int>? CategoryId { get; set; }
+        public decimal PriceMIN { get; set; }
+        public decimal PriceMAX { get; set; }
+        public List<string>? Color { get; set; }
         public int Page { get; set; }
         public int Take { get; set; }
     }

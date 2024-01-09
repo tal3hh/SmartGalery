@@ -23,15 +23,33 @@ namespace Api.Controllers
         }
 
         [HttpPost("DashProductSearch")]
-        public async Task<IActionResult> DashProductSearch(ProductFilterVM pagineVM)
+        public async Task<IActionResult> DashProductSearch(DashProductSearchVM vm)
         {
-            return Ok(await _ProductService.DashProductSearch(pagineVM));
+            return Ok(await _ProductService.DashProductSearch(vm));
         }
 
         [HttpPost("HomeFilter")]
-        public async Task<IActionResult> HomeFilterList(ProductFilterVM pagineVM)
+        public async Task<IActionResult> HomeFilterList(HomeProductFilterVM vm)
         {
-            return Ok(await _ProductService.HomeProductFilter(pagineVM));
+            return Ok(await _ProductService.HomeProductFilter(vm));
+        }
+
+        [HttpPost("HomeBrandFilter")]
+        public async Task<IActionResult> HomeBrandFilterList(HomeProBrandFilter vm)
+        {
+            return Ok(await _ProductService.HomeProductBrandFilter(vm));
+        }
+
+        [HttpGet("HomeNewProducts")]
+        public async Task<IActionResult> HomeNewProducts()
+        {
+            return Ok(await _ProductService.NewProductList());
+        }
+
+        [HttpPost("HomeProductDetail/{productId}")]
+        public async Task<IActionResult> HomeProductDetail(int productId)
+        {
+            return Ok(await _ProductService.ProductDetailPage(productId));
         }
 
         [HttpPost]
