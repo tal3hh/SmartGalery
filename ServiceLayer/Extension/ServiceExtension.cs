@@ -33,6 +33,9 @@ namespace ServiceLayer.Extension
             services.AddScoped<IProductDetailService, ProductDetailService>();
             services.AddScoped<IProductImageService, ProductImageService>();
             services.AddScoped<ISubscribeService, SubscribeService>();
+
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IMessageSend, MessageSend>();
         }
     }
 }
