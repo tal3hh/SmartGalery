@@ -25,27 +25,6 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-#region JWT
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(cfg =>
-{
-    cfg.RequireHttpsMetadata = false;
-    cfg.SaveToken = true;
-    cfg.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audince"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-
-        ClockSkew = TimeSpan.Zero  // remove delay of token when expire
-    };
-});
-#endregion
-
 
 #region Identity
 
@@ -67,6 +46,28 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
 
 }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
+#endregion
+
+
+#region JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audince"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+
+        ClockSkew = TimeSpan.Zero  // remove delay of token when expire
+    };
+});
 #endregion
 
 
@@ -108,8 +109,6 @@ builder.Services.AddSingleton(mapper);
 #endregion
 
 
-builder.Services.AddScoped<IUow, Uow>();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -122,7 +121,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 app.UseRouting();
+
+app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
 
