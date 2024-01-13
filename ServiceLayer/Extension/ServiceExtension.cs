@@ -35,6 +35,7 @@ namespace ServiceLayer.Extension
             services.AddScoped<ISubscribeService, SubscribeService>();
 
             services.AddScoped<IAccountService, AccountService>();
+            services.AddTransient<ITokenService, TokenService>();
             services.AddScoped<IMessageSend, MessageSend>();
         }
     }

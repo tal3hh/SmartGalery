@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Account;
+using ServiceLayer.Services;
 using ServiceLayer.Services.Interfaces;
 
 namespace Api.Controllers
@@ -15,13 +16,15 @@ namespace Api.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IMessageSend _messageSend;
+        private readonly ITokenService _tokenService;
 
-        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, IMessageSend messageSend)
+        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, IMessageSend messageSend, ITokenService tokenService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _messageSend = messageSend;
+            _tokenService = tokenService;
         }
 
         #region Register
@@ -44,10 +47,10 @@ namespace Api.Controllers
             {
                 var role = new IdentityRole
                 {
-                    Name = "Member"
+                    Name = "Admin"
                 };
 
-                await _userManager.AddToRoleAsync(user, "Member");
+                await _userManager.AddToRoleAsync(user, "Admin");
 
                 AppUser? appUser = await _userManager.FindByEmailAsync(user.Email);
 
@@ -57,6 +60,10 @@ namespace Api.Controllers
                 string? url = Url.Action(nameof(VerifyEmail), "Account", new { userId = user.Id, token = code }, Request.Scheme, Request.Host.ToString());
 
                 _messageSend.MimeKitConfrim(appUser, url, code);
+
+                var roles = await _userManager.GetRolesAsync(user);
+
+                var token = _tokenService.GenerateJwtToken(user.UserName, (List<string>)roles);
 
                 return Ok(dto);
             }
@@ -121,11 +128,19 @@ namespace Api.Controllers
 
             if (identity.Succeeded)
             {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                TokenResponseDto token = _tokenService.GenerateJwtToken(user.UserName, (List<string>)roles);
+
+                if (token == null) return BadRequest("Token null");
+
                 var homeDto = new HomeUserDto
                 {
                     Username = user.UserName,
                     Fullname = user.Fullname,
-                    Email = user.Email
+                    Email = user.Email,
+                    Token = token.Token,
+                    ExpireDate = token.ExpireDate
                 };
                 return Ok(homeDto);
             }
@@ -142,5 +157,7 @@ namespace Api.Controllers
             return BadRequest(dto);
         }
         #endregion
+
+
     }
 }

@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace ServiceLayer.Dtos.Account
 {
-    public class HomeUserDto
+    public class TokenResponseDto
     {
-        public string? Username { get; set; } // "My Order"leri getirmek ucun istifade olunacag.
-        public string? Fullname { get; set; }
-        public string? Email { get; set; }
+        public TokenResponseDto(string token, DateTime expiredate)
+        {
+            Token = token;
+            ExpireDate = expiredate;
+        }
+
         public string? Token { get; set; }
         public DateTime ExpireDate { get; set; }
     }
