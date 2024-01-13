@@ -1,6 +1,7 @@
 ﻿using DomainLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Account;
 using ServiceLayer.Services;
@@ -158,6 +159,79 @@ namespace Api.Controllers
         }
         #endregion
 
+        #region UsersandRoles
 
+        [HttpGet("Users")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var userList = await _userManager.Users.ToListAsync();
+
+            List<DashUserDto> userDtos = userList.Select(user => new DashUserDto
+            {
+                Fullname = user.Fullname,
+                Username = user.UserName,
+                Email = user.Email,
+                Phone = user.PhoneNumber,
+                CreateDate = user.CreateDate
+            }).ToList();
+
+            return Ok(userDtos);
+        }
+
+        [HttpGet("Roles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var roles = await _roleManager.Roles.ToListAsync();
+
+            List<DashRoleDto> roleDtos = roles.Select(role => new DashRoleDto
+            {
+                Name = role.Name
+            }).ToList();
+
+            return Ok(roleDtos);
+        }
+        #endregion
+
+        #region Delete
+        [HttpDelete("User/{UsernameorEmail}")]
+        public async Task<IActionResult> UserRemove(string UsernameorEmail)
+        {
+            if (UsernameorEmail != null)
+            {
+                var user = new AppUser();
+
+                user = await _userManager.FindByNameAsync(UsernameorEmail);
+                if (user == null)
+                    user = await _userManager.FindByEmailAsync(UsernameorEmail);
+
+                if (user != null)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return Ok("Istifadeci silindi");
+                }
+                return NotFound("Istifadeci tapilmadi.");
+            }
+
+            return Unauthorized("UsernameorEmail bosdur");
+        }
+
+        [HttpDelete("Role/{name}")]
+        public async Task<IActionResult> RoleRemove(string name)
+        {
+            if (name != null)
+            {
+                var role = await _roleManager.FindByNameAsync(name);
+                
+                if (role != null)
+                {
+                    await _roleManager.DeleteAsync(role);
+                    return Ok("Role silindi");
+                }
+                return NotFound("Role tapilmadi.");
+            }
+
+            return Unauthorized("Name bosdur");
+        }
+        #endregion
     }
 }

@@ -10,7 +10,7 @@ namespace DomainLayer.Entities
     public class AppUser : IdentityUser
     {
         public string? Fullname { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now;
 
         public List<Rating>? Ratings { get; set; }
         public List<Order>? Orders { get; set; }
