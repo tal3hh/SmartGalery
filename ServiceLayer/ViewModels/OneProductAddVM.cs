@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace ServiceLayer.ViewModels
 {
-    public class HomeOrderAddVM
+    public class OneProductAddVM
     {
         public string? Username { get; set; }
         public int ProductId { get; set; }
-        public int Quantity { get; set; }
     }
 }

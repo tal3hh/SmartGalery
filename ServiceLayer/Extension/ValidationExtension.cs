@@ -14,6 +14,8 @@ using ServiceLayer.Dtos.Subscribe;
 using ServiceLayer.Validations;
 using ServiceLayer.Validations.Account;
 using ServiceLayer.Validations.Brand;
+using ServiceLayer.Validations.ModelView;
+using ServiceLayer.ViewModels;
 
 namespace ServiceLayer.Extension
 {
@@ -51,6 +53,12 @@ namespace ServiceLayer.Extension
             services.AddScoped<IValidator<RatingUpdateDto>, RatingUpdateValidation>();
 
             services.AddScoped<IValidator<SubscribeCreateDto>, SubscribeCreateValidation>();
+
+
+            //Model View
+            services.AddScoped<IValidator<OneProductAddVM>, OneProductAddVMValidation>();
+            services.AddScoped<IValidator<ManyProductAddVM>, ManyProductAddVMValidation>();
         }
+        
     }
 }
