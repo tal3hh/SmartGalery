@@ -34,6 +34,10 @@ namespace RepositoryLayer.Contexts
             modelBuilder.Entity<OrderItem>().HasOne(x => x.Order).WithMany(x => x.OrderItems).HasForeignKey(x => x.OrderId);
             modelBuilder.Entity<OrderItem>().HasOne(x => x.Product).WithMany(x => x.OrderItems).HasForeignKey(x => x.ProductId);
 
+            modelBuilder.Entity<ShippingAsdress>().HasOne(x => x.AppUser).WithMany(x => x.ShippingAsdresses).HasForeignKey(x => x.AppUserId);
+            modelBuilder.Entity<ShippingAsdress>().HasOne(x => x.Order).WithOne(x => x.ShippingAsdress).HasForeignKey<ShippingAsdress>(x => x.OrderId);
+
+
             base.OnModelCreating(modelBuilder);
         }
 
