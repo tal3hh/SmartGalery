@@ -15,18 +15,50 @@ namespace Api.Controllers
     {
         readonly private AppDbContext _context;
         private readonly UserManager<AppUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        public OrderController(AppDbContext context, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager)
+        public OrderController(AppDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _roleManager = roleManager;
-            _signInManager = signInManager;
         }
 
 
-        //Checkout sehifesine getdikde cixan orderler.
+
+        //Checout sehifesine getdikde
+        [HttpPost("ShippingAdress")]
+        public async Task<IActionResult> ShippingAdress(ShippingDto dto)
+        {
+            if(!ModelState.IsValid) return BadRequest(dto);
+
+            var user = await _userManager.FindByNameAsync(dto.Username);
+            if (user is null) return NotFound();
+
+            Order? order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
+            if (order is null) return NotFound();
+
+            ShippingAsdress shipping = new()
+            {
+                OrderId = order.Id,
+                AppUserId = user.Id,
+
+                Email = dto.Email,
+                Firstname = dto.Firstname,
+                Lastname = dto.Lastname,
+                Company = dto.Company,
+                StreetAddress = dto.StreetAddress,
+                City = dto.City,
+                State = dto.State,
+                PostalCode = dto.PostalCode,
+                Country = dto.Country,
+                PhoneNumber = dto.PhoneNumber
+            };
+
+            await _context.ShippingAsdresses.AddAsync(shipping);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        //CARD sehifesine getdikde cixan orderler
         [HttpPost("OrderProducts")]
         public async Task<IActionResult> OrderProducts(string username)
         {
@@ -123,8 +155,7 @@ namespace Api.Controllers
             return Ok();
         }
 
-
-        //Bu action sadece productun uzerine vurduqda isliyecek.
+        //Bu action sadece productun uzerine vurduqda isliyecek
         [HttpPost("OneProductAdd")]
         public async Task<IActionResult> OneProductAdd(OneProductAddVM vm)
         {

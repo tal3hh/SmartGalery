@@ -54,6 +54,7 @@ namespace RepositoryLayer.Contexts
         public DbSet<Subscribe> Subscribes { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<ShippingAsdress> ShippingAsdresses { get; set; }
 
     }
 }

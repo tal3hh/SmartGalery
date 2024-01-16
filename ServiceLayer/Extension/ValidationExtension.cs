@@ -6,6 +6,7 @@ using ServiceLayer.Dtos.Brand;
 using ServiceLayer.Dtos.Category;
 using ServiceLayer.Dtos.Comment;
 using ServiceLayer.Dtos.Contact;
+using ServiceLayer.Dtos.Order;
 using ServiceLayer.Dtos.Product;
 using ServiceLayer.Dtos.ProductDetail;
 using ServiceLayer.Dtos.ProductImage;
@@ -15,6 +16,7 @@ using ServiceLayer.Validations;
 using ServiceLayer.Validations.Account;
 using ServiceLayer.Validations.Brand;
 using ServiceLayer.Validations.ModelView;
+using ServiceLayer.Validations.Order;
 using ServiceLayer.ViewModels;
 
 namespace ServiceLayer.Extension
@@ -54,6 +56,7 @@ namespace ServiceLayer.Extension
 
             services.AddScoped<IValidator<SubscribeCreateDto>, SubscribeCreateValidation>();
 
+            services.AddScoped<IValidator<ShippingDto>, ShippingValidation>();
 
             //Model View
             services.AddScoped<IValidator<OneProductAddVM>, OneProductAddVMValidation>();
