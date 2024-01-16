@@ -27,7 +27,44 @@ namespace Api.Controllers
 
 
         //Checkout sehifesine getdikde cixan orderler.
+        [HttpPost("OrderProducts")]
+        public async Task<IActionResult> OrderProducts(string username)
+        {
+            if (username is null) return NotFound(username);
 
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null) return NotFound(username);
+
+            Order? order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
+            if (order == null) return NotFound("Sebet bosdur");
+
+            List<OrderItem> orderItems = await _context.OrderItems.Include(x => x.Product)
+                .Where(x => x.OrderId == order.Id).ToListAsync();
+
+            HomeOrderDto homeOrderDto = new HomeOrderDto
+            {
+                Subtotal = order.TotalAmount,
+                HomeOrderItemDtos = new List<HomeOrderItemDto>()
+            };
+
+            foreach (var item in orderItems)
+            {
+                var productImage = await _context.ProductImages
+                    .Where(pi => pi.ProductId == item.Product.Id)
+                    .FirstOrDefaultAsync();
+
+                homeOrderDto.HomeOrderItemDtos.Add(new HomeOrderItemDto
+                {
+                    ProductPath = productImage?.Path, 
+                    About = item.Product.About,
+                    Price = item.Product.Price,
+                    Quantity = item.Quantity,
+                    UnitePrice = item.UnitPrice
+                });
+            }
+
+            return Ok(homeOrderDto);
+        }
 
         //Basketden product sayini artirmaq
         [HttpPost("ManyProductAdd")]

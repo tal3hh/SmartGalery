@@ -9,6 +9,6 @@ namespace ServiceLayer.Dtos.Order
     public class HomeOrderDto
     {
         public decimal Subtotal { get; set; }
-        public List<HomeOrderDto>? HomeOrderDtos { get; set; }
+        public List<HomeOrderItemDto>? HomeOrderItemDtos { get; set; }
     }
 }
