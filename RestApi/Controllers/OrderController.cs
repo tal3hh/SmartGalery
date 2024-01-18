@@ -24,14 +24,6 @@ namespace Api.Controllers
             _orderService = orderService;
         }
 
-        [HttpPost("DashOrderDateFilter")]
-        public async Task<IActionResult> DashOrderDateFilter(DashOrderDateVM vm)
-        {
-            var list = await _orderService.DashProductOrderFilter(vm);
-
-            return Ok(list);
-        }
-
         //Checout sehifesine getdikde
         [HttpPost("ShippingAdress")]
         public async Task<IActionResult> ShippingAdress(ShippingDto dto)

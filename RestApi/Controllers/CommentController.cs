@@ -15,12 +15,6 @@ namespace Api.Controllers
             _CommentService = CommentService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return Ok(await _CommentService.GetAllAsync());
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create(CommentCreateDto dto)
         {
@@ -35,14 +29,6 @@ namespace Api.Controllers
             await _CommentService.CreateAsync(dto);
 
             return Ok(dto);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            await _CommentService.RemoveAsync(id);
-
-            return Ok();
         }
     }
 }

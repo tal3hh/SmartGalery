@@ -16,12 +16,6 @@ namespace Api.Controllers
             _ContactService = ContactService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return Ok(await _ContactService.GetAllAsync());
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create(ContactCreateDto dto)
         {
@@ -36,14 +30,6 @@ namespace Api.Controllers
             await _ContactService.CreateAsync(dto);
 
             return Ok(dto);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            await _ContactService.RemoveAsync(id);
-
-            return Ok();
         }
     }
 }

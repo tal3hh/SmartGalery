@@ -15,12 +15,6 @@ namespace Api.Controllers
             _SubscribeService = SubscribeService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return Ok(await _SubscribeService.GetAllAsync());
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create(SubscribeCreateDto dto)
         {
@@ -35,14 +29,6 @@ namespace Api.Controllers
             await _SubscribeService.CreateAsync(dto);
 
             return Ok(dto);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            await _SubscribeService.RemoveAsync(id);
-
-            return Ok();
         }
     }
 }

@@ -90,5 +90,26 @@ namespace Api.Controllers
 
             return Ok(wishDtos);
         }
+
+        [HttpDelete("AllWishRemove")]
+        public async Task<IActionResult> AllWishRemove(string? username)
+        {
+            if (string.IsNullOrEmpty(username))
+                return BadRequest(nameof(username));
+
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+                return NotFound(nameof(username));
+
+            var list = await _context.Wishes.Where(x=> x.AppUserId == user.Id).ToListAsync();
+
+            foreach (var item in list)
+            {
+                _context.Wishes.Remove(item);
+            }
+            await _context.SaveChangesAsync();
+
+            return Ok("Datalar silindi");
+        }
     }
 }
