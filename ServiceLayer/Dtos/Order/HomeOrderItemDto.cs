@@ -13,5 +13,6 @@ namespace ServiceLayer.Dtos.Order
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public decimal UnitePrice { get; set; }
+        public DateTime OrderDate { get; set; }
     }
 }

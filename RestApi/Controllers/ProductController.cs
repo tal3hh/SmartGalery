@@ -16,6 +16,14 @@ namespace Api.Controllers
             _ProductService = ProductService;
         }
 
+        [HttpPost("OrderDateFilter")]
+        public async Task<IActionResult> OrderDateFilter()
+        {
+            
+            return null;
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -51,6 +59,7 @@ namespace Api.Controllers
         {
             return Ok(await _ProductService.ProductDetailPage(productId));
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Create(ProductCreateDto dto)

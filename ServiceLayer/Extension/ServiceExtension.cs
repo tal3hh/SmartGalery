@@ -33,6 +33,7 @@ namespace ServiceLayer.Extension
             services.AddScoped<IProductDetailService, ProductDetailService>();
             services.AddScoped<IProductImageService, ProductImageService>();
             services.AddScoped<ISubscribeService, SubscribeService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddTransient<ITokenService, TokenService>();

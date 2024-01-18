@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Order;
+using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels;
 
 namespace Api.Controllers
@@ -15,19 +16,27 @@ namespace Api.Controllers
     {
         readonly private AppDbContext _context;
         private readonly UserManager<AppUser> _userManager;
-        public OrderController(AppDbContext context, UserManager<AppUser> userManager)
+        private readonly IOrderService _orderService;
+        public OrderController(AppDbContext context, UserManager<AppUser> userManager, IOrderService orderService)
         {
             _context = context;
             _userManager = userManager;
+            _orderService = orderService;
         }
 
+        [HttpPost("DashOrderDateFilter")]
+        public async Task<IActionResult> DashOrderDateFilter(DashOrderDateVM vm)
+        {
+            var list = await _orderService.DashProductOrderFilter(vm);
 
+            return Ok(list);
+        }
 
         //Checout sehifesine getdikde
         [HttpPost("ShippingAdress")]
         public async Task<IActionResult> ShippingAdress(ShippingDto dto)
         {
-            if(!ModelState.IsValid) return BadRequest(dto);
+            if (!ModelState.IsValid) return BadRequest(dto);
 
             var user = await _userManager.FindByNameAsync(dto.Username);
             if (user is null) return NotFound();
@@ -87,7 +96,7 @@ namespace Api.Controllers
 
                 homeOrderDto.HomeOrderItemDtos.Add(new HomeOrderItemDto
                 {
-                    ProductPath = productImage?.Path, 
+                    ProductPath = productImage?.Path,
                     About = item.Product.About,
                     Price = item.Product.Price,
                     Quantity = item.Quantity,
@@ -122,8 +131,8 @@ namespace Api.Controllers
                 order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
             }
 
-            Product? product = await _context.Products.Include(x=> x.ProductImages)
-                .SingleOrDefaultAsync(x=> x.Id == vm.ProductId);
+            Product? product = await _context.Products.Include(x => x.ProductImages)
+                .SingleOrDefaultAsync(x => x.Id == vm.ProductId);
 
             if (product == null) return NotFound("Product tapilmadi");
             if (product.Count < vm.Quantity) return BadRequest($"Mehsuldan {product.Count} eded qalib.");
@@ -179,7 +188,7 @@ namespace Api.Controllers
                 order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
             }
 
-            Product? product = await _context.Products.FindAsync(vm.ProductId);
+            Product? product = await _context.Products.SingleOrDefaultAsync(x => x.Id == vm.ProductId && x.IsStock);
             if (product == null) return NotFound("Product tapilmadi");
 
             OrderItem? orderItem = await _context.OrderItems.SingleOrDefaultAsync(x => x.ProductId == vm.ProductId);

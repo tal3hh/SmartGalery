@@ -49,20 +49,11 @@ namespace ServiceLayer.Services
                 query = query.Where(p => p.Name.Contains(vm.Search));
             }
 
-            query = query.OrderByDescending(p => p.CreateDate);
-
             int totalCount = await query.CountAsync();
             int take = vm.Take > 0 ? vm.Take : 10;
             int totalPages = (int)Math.Ceiling(totalCount / (double)take);
 
             int currentPage = vm.Page > 0 ? vm.Page : 1;
-
-            List<Product> products = await query
-                .Skip((currentPage - 1) * take)
-                .Take(take)
-                .ToListAsync();
-
-            List<ProductDto> productDto = _mapper.Map<List<ProductDto>>(products);
 
             List<DashProductDto> productDtos = await query
                 .OrderByDescending(p => p.CreateDate)
