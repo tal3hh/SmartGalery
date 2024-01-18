@@ -487,6 +487,32 @@ namespace RepositoryLayer.Migrations
                     b.ToTable("Subscribes");
                 });
 
+            modelBuilder.Entity("DomainLayer.Entities.Wish", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Wishes");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -740,6 +766,23 @@ namespace RepositoryLayer.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("DomainLayer.Entities.Wish", b =>
+                {
+                    b.HasOne("DomainLayer.Entities.AppUser", "AppUser")
+                        .WithMany("Wishes")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("DomainLayer.Entities.Product", "Product")
+                        .WithMany("Wishes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -800,6 +843,8 @@ namespace RepositoryLayer.Migrations
                     b.Navigation("Ratings");
 
                     b.Navigation("ShippingAsdresses");
+
+                    b.Navigation("Wishes");
                 });
 
             modelBuilder.Entity("DomainLayer.Entities.Brand", b =>
@@ -830,6 +875,8 @@ namespace RepositoryLayer.Migrations
                     b.Navigation("ProductImages");
 
                     b.Navigation("Ratings");
+
+                    b.Navigation("Wishes");
                 });
 #pragma warning restore 612, 618
         }

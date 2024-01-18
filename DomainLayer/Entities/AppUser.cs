@@ -15,6 +15,7 @@ namespace DomainLayer.Entities
         public List<Rating>? Ratings { get; set; }
         public List<Order>? Orders { get; set; }
         public List<Comment>? Comments { get; set; }
+        public List<Wish>? Wishes { get; set; }
         public List<ShippingAsdress>? ShippingAsdresses { get; set; }
     }
 }

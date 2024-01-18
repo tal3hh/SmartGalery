@@ -29,5 +29,6 @@ namespace DomainLayer.Entities
         public List<ProductImage>? ProductImages { get; set; }
         public List<Comment>? Comments { get; set; }
         public List<ProductDetail>? ProductDetails { get; set; }
+        public List<Wish>? Wishes { get; set; }
     }
 }

@@ -34,6 +34,9 @@ namespace RepositoryLayer.Contexts
             modelBuilder.Entity<OrderItem>().HasOne(x => x.Order).WithMany(x => x.OrderItems).HasForeignKey(x => x.OrderId);
             modelBuilder.Entity<OrderItem>().HasOne(x => x.Product).WithMany(x => x.OrderItems).HasForeignKey(x => x.ProductId);
 
+            modelBuilder.Entity<Wish>().HasOne(x => x.Product).WithMany(x => x.Wishes).HasForeignKey(x => x.ProductId);
+            modelBuilder.Entity<Wish>().HasOne(x => x.AppUser).WithMany(x => x.Wishes).HasForeignKey(x => x.AppUserId);
+
             modelBuilder.Entity<ShippingAsdress>().HasOne(x => x.AppUser).WithMany(x => x.ShippingAsdresses).HasForeignKey(x => x.AppUserId);
             modelBuilder.Entity<ShippingAsdress>().HasOne(x => x.Order).WithOne(x => x.ShippingAsdress).HasForeignKey<ShippingAsdress>(x => x.OrderId);
 
@@ -53,6 +56,7 @@ namespace RepositoryLayer.Contexts
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Subscribe> Subscribes { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Wish> Wishes { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<ShippingAsdress> ShippingAsdresses { get; set; }
 
