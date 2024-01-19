@@ -6,6 +6,8 @@ using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Account;
 using ServiceLayer.Services;
 using ServiceLayer.Services.Interfaces;
+using ServiceLayer.ViewModels;
+using System.Security.Principal;
 
 namespace Api.Controllers
 {
@@ -28,6 +30,50 @@ namespace Api.Controllers
             _tokenService = tokenService;
         }
 
+        #region Login
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(UserLoginDto dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(dto);
+
+            AppUser? user = await _userManager.FindByEmailAsync(dto.UsernameorEmail);
+            if (user is null)
+                user = await _userManager.FindByNameAsync(dto.UsernameorEmail);
+
+            if (user is null) return NotFound(dto);
+
+            var identity = await _signInManager.PasswordSignInAsync(user, dto.Password, dto.RememberMe, false);
+
+            if (identity.Succeeded)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                TokenResponseDto token = _tokenService.GenerateJwtToken(user.UserName, (List<string>)roles);
+
+                if (token is null) return BadRequest("Token null");
+
+                var homeDto = new HomeUserDto
+                {
+                    Username = user.UserName,
+                    Fullname = user.Fullname,
+                    Email = user.Email,
+                    Token = token.Token,
+                    ExpireDate = token.ExpireDate
+                };
+                return Ok(homeDto);
+            }
+            if (!(await _userManager.IsEmailConfirmedAsync(user)))
+            {
+                ModelState.AddModelError("", $"Qeydiyyat zamanı daxil etdiyiniz e-poçtu təsdiqləyin." +
+                                                $"Əks halda hesaba daxil ola bilməzsiniz." +
+                                                $"E-poçt ünvanı: {user.Email}");
+                return BadRequest(dto);
+            }
+
+            return BadRequest("Istifadəçi adı və şifrə yalnışdır.");
+        }
+        #endregion
+
         #region Register
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserCreateDto dto)
@@ -46,12 +92,8 @@ namespace Api.Controllers
 
             if (identity.Succeeded)
             {
-                var role = new IdentityRole
-                {
-                    Name = "Admin"
-                };
 
-                await _userManager.AddToRoleAsync(user, "Admin");
+                await _userManager.AddToRoleAsync(user, "Member");
 
                 AppUser? appUser = await _userManager.FindByEmailAsync(user.Email);
 
@@ -61,10 +103,6 @@ namespace Api.Controllers
                 string? url = Url.Action(nameof(VerifyEmail), "Account", new { userId = user.Id, token = code }, Request.Scheme, Request.Host.ToString());
 
                 _messageSend.MimeKitConfrim(appUser, url, code);
-
-                var roles = await _userManager.GetRolesAsync(user);
-
-                var token = _tokenService.GenerateJwtToken(user.UserName, (List<string>)roles);
 
                 return Ok(dto);
             }
@@ -85,7 +123,7 @@ namespace Api.Controllers
             if (user is null) return BadRequest();
             await _userManager.ConfirmEmailAsync(user, token);
 
-            return Ok();
+            return Redirect("https://www.figma.com/file/id2hFRKe4GIGO6dQPFBPtq/ecommerce-cavid?type=design&node-id=5-10933&mode=design");
         }
         #endregion
 
@@ -105,56 +143,6 @@ namespace Api.Controllers
             if (result.Succeeded)
                 return Ok(dto);
 
-            return BadRequest(dto);
-        }
-        #endregion
-
-        #region Login
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(UserLoginDto dto)
-        {
-            if (!ModelState.IsValid) return BadRequest(dto);
-
-            AppUser? user = await _userManager.FindByEmailAsync(dto.UsernameorEmail);
-            if (user == null)
-                user = await _userManager.FindByNameAsync(dto.UsernameorEmail);
-
-            if (user == null)
-            {
-                ModelState.AddModelError("", "İstifadəçi tapılmadı");
-                return NotFound(dto);
-            }
-
-            var identity = await _signInManager.PasswordSignInAsync(user, dto.Password, dto.RememberMe, false);
-
-            if (identity.Succeeded)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-
-                TokenResponseDto token = _tokenService.GenerateJwtToken(user.UserName, (List<string>)roles);
-
-                if (token == null) return BadRequest("Token null");
-
-                var homeDto = new HomeUserDto
-                {
-                    Username = user.UserName,
-                    Fullname = user.Fullname,
-                    Email = user.Email,
-                    Token = token.Token,
-                    ExpireDate = token.ExpireDate
-                };
-                return Ok(homeDto);
-            }
-            else
-            {
-                if (!(await _userManager.IsEmailConfirmedAsync(user)))
-                {
-                    ModelState.AddModelError("", $"Qeydiyyat zamanı daxil etdiyiniz e-poçtu təsdiqləyin." +
-                                                    $"Əks halda hesaba daxil ola bilməzsiniz." +
-                                                    $"E-poçt ünvanı: {user.Email}");
-                    return BadRequest(dto);
-                }
-            }
             return BadRequest(dto);
         }
         #endregion
@@ -232,6 +220,76 @@ namespace Api.Controllers
 
             return Unauthorized("Name bosdur");
         }
+        #endregion
+
+        #region ResetPassword
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(UserResetPassVM vm)
+        {
+            if (!ModelState.IsValid) return BadRequest(vm);
+
+            AppUser? user = await _userManager.FindByNameAsync(vm.Username);
+            if (user is null) return NotFound("Belə bir istifadəçi tapılmadı.");
+
+            if (!await _userManager.CheckPasswordAsync(user, vm.OldPassword))
+                return BadRequest("Əvvəlki şifrə yanlışdır.");
+
+            var result = await _userManager.ChangePasswordAsync(user, vm.OldPassword, vm.NewPassword);
+
+            if (result.Succeeded)
+                return Ok("Şifrə uğurla dəyişdirildi.");
+
+            return BadRequest(result.Errors.Select(e => e.Description));
+        }
+        #endregion
+
+
+        //Hazir DEYIL
+        #region ForgotPassowrd
+        //[HttpPost("ForgotPassword")]
+        //public async Task<IActionResult> ForgotPassword(string email)
+        //{
+        //    if (string.IsNullOrEmpty(email)) return BadRequest("Email tələb olunur.");
+
+        //    AppUser? user = await _userManager.FindByEmailAsync(email);
+
+        //    if (user == null) return NotFound($"Email '{email}' ilə istifadəçi tapılmadı.");
+        //    if (!(await _userManager.IsEmailConfirmedAsync(user))) return BadRequest("Email təsdiqlənməyib.");
+
+        //    string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        //    var url = Url.Action("ForgotResetPassword", "Account", new { email = email, token = code }, Request.Scheme);
+
+        //    // E-poçt göndərmə prosesi
+        //    _messageSend.MimeMessageResetPassword(user, url, code);
+
+        //    return Ok("Şifrə sıfırlama linki e-poçtunuza göndərildi.");
+        //}
+
+        //[HttpPost("ForgotResetPassword")]
+        //public async Task<IActionResult> ForgotResetPassword([FromQuery] string token, string email, string password)
+        //{
+        //    if (email == null || token == null) return BadRequest("Email və token tələb olunur.");
+
+        //    AppUser? user = await _userManager.FindByEmailAsync(email);
+
+        //    if (user == null) return NotFound($"Email '{email}' ilə istifadəçi tapılmadı.");
+
+        //    // Token'ın doğruluğu yoxlanılır
+        //    var result = await _userManager.ResetPasswordAsync(user, token, password);
+
+        //    if (result.Succeeded)
+        //    {
+        //        return Ok("Şifrə uğurla sıfırlanıb.");
+        //    }
+
+        //    // Hata halları üçün daha spesifik xəbərlər əlavə olunur
+        //    foreach (var error in result.Errors)
+        //    {
+        //        ModelState.AddModelError("", error.Description);
+        //    }
+        //    return BadRequest("Şifrə sıfırlama uğursuz oldu.");
+        //}
         #endregion
     }
 }

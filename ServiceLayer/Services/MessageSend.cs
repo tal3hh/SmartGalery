@@ -9,6 +9,7 @@ namespace ServiceLayer.Services
 {
     public class MessageSend : IMessageSend
     {
+
         public void MimeKitConfrim(AppUser appUser, string url, string token)
         {
             var message = new MimeMessage();
@@ -43,7 +44,6 @@ namespace ServiceLayer.Services
             smtp.Send(message);
             smtp.Disconnect(true);
         }
-
 
         public void MimeMessageResetPassword(AppUser user, string url, string code)
         {
