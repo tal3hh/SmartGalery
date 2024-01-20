@@ -19,6 +19,7 @@ namespace RepositoryLayer.Contexts
         {
             modelBuilder.Entity<Product>().HasOne(x => x.Category).WithMany(x => x.Products).HasForeignKey(x => x.CategoryId);
             modelBuilder.Entity<Product>().HasOne(x => x.Brand).WithMany(x => x.Products).HasForeignKey(x => x.BrandId);
+
             modelBuilder.Entity<ProductImage>().HasOne(x => x.Product).WithMany(x => x.ProductImages).HasForeignKey(x => x.ProductId);
 
             modelBuilder.Entity<Comment>().HasOne(x => x.Product).WithMany(x => x.Comments).HasForeignKey(x => x.ProductId);
@@ -32,7 +33,6 @@ namespace RepositoryLayer.Contexts
             modelBuilder.Entity<Order>().HasOne(x => x.AppUser).WithMany(x => x.Orders).HasForeignKey(x => x.AppUserId);
 
             modelBuilder.Entity<OrderItem>().HasOne(x => x.Order).WithMany(x => x.OrderItems).HasForeignKey(x => x.OrderId);
-            modelBuilder.Entity<OrderItem>().HasOne(x => x.Product).WithMany(x => x.OrderItems).HasForeignKey(x => x.ProductId);
 
             modelBuilder.Entity<Wish>().HasOne(x => x.Product).WithMany(x => x.Wishes).HasForeignKey(x => x.ProductId);
             modelBuilder.Entity<Wish>().HasOne(x => x.AppUser).WithMany(x => x.Wishes).HasForeignKey(x => x.AppUserId);
@@ -40,12 +40,15 @@ namespace RepositoryLayer.Contexts
             modelBuilder.Entity<ShippingAsdress>().HasOne(x => x.AppUser).WithMany(x => x.ShippingAsdresses).HasForeignKey(x => x.AppUserId);
             modelBuilder.Entity<ShippingAsdress>().HasOne(x => x.Order).WithOne(x => x.ShippingAsdress).HasForeignKey<ShippingAsdress>(x => x.OrderId);
 
+            modelBuilder.Entity<Basket>().HasOne(x => x.AppUser).WithMany(x => x.Baskets).HasForeignKey(x => x.AppUserId);
+            modelBuilder.Entity<Basket>().HasOne(x => x.Product).WithMany(x => x.Baskets).HasForeignKey(x => x.ProductId);
 
             base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Brand> Brands { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductDetail> ProductDetails { get; set; }

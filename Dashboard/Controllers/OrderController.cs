@@ -3,9 +3,11 @@ using MailKit.Search;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.X509;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Order;
-using ServiceLayer.Services.Interfaces;
+using ServiceLayer.Dtos.Product.Dash;
+using ServiceLayer.Utilities;
 using ServiceLayer.ViewModels;
 
 namespace Api.Controllers
@@ -16,171 +18,161 @@ namespace Api.Controllers
     {
         readonly private AppDbContext _context;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IOrderService _orderService;
-        public OrderController(AppDbContext context, UserManager<AppUser> userManager, IOrderService orderService)
+        public OrderController(AppDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _orderService = orderService;
         }
 
-
-        [HttpPost("DashOrderDateFilter")]
-        public async Task<IActionResult> DashOrderDateFilter(DashOrderDateVM vm)
+        [HttpPost("OrderCreate")]
+        public async Task<IActionResult> OrderCreate(string username)
         {
-            var list = await _orderService.DashProductOrderFilter(vm);
-
-            return Ok(list);
-        }
-
-        //CARD sehifesine getdikde cixan orderler
-        [HttpPost("OrderProducts")]
-        public async Task<IActionResult> OrderProducts(string username)
-        {
-            if (username is null) return NotFound(username);
+            if (username is null) return BadRequest(username);
 
             var user = await _userManager.FindByNameAsync(username);
             if (user == null) return NotFound(username);
 
-            Order? order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
-            if (order == null) return NotFound("Sebet bosdur");
+            List<Basket>? baskets = await _context.Baskets.Include(x=> x.Product)
+                                                  .Where(x => x.AppUserId == user.Id).ToListAsync();
 
-            List<OrderItem> orderItems = await _context.OrderItems.Include(x => x.Product)
-                .Where(x => x.OrderId == order.Id).ToListAsync();
+            if (baskets.Count() == 0) return BadRequest("Sebet bosdur.");
 
-            HomeOrderDto homeOrderDto = new HomeOrderDto
+            Order newOrder = new Order
             {
-                Subtotal = order.TotalAmount,
-                HomeOrderItemDtos = new List<HomeOrderItemDto>()
+                AppUserId = user.Id,
+                TotalAmount = baskets.Sum(basket => basket.Quantity * (basket.Product?.Price ?? 0)),
+                OrderItems = baskets.Select(basket => new OrderItem
+                {
+                    ProductName = basket.Product?.Name,
+                    Quantity = basket.Quantity,
+                    UnitPrice = basket.Product.Price * basket.Quantity
+                }).ToList()
             };
 
-            foreach (var item in orderItems)
-            {
-                var productImage = await _context.ProductImages
-                    .Where(pi => pi.ProductId == item.Product.Id)
-                    .FirstOrDefaultAsync();
-
-                homeOrderDto.HomeOrderItemDtos.Add(new HomeOrderItemDto
-                {
-                    ProductPath = productImage?.Path,
-                    About = item.Product.About,
-                    Price = item.Product.Price,
-                    Quantity = item.Quantity,
-                    UnitePrice = item.UnitPrice
-                });
-            }
-
-            return Ok(homeOrderDto);
-        }
-
-        //Basketden product sayini artirmaq
-        [HttpPost("ManyProductAdd")]
-        public async Task<IActionResult> ManyProductAdd(ManyProductAddVM vm)
-        {
-            if (!ModelState.IsValid) return Unauthorized(vm);
-
-            var user = await _userManager.FindByNameAsync(vm.Username);
-            if (user == null) return NotFound(vm.Username);
-
-            Order? order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
-            if (order == null)
-            {
-                var newOrder = new Order
-                {
-                    AppUserId = user.Id,
-                    IsActive = true
-                };
-
-                await _context.Orders.AddAsync(newOrder);
-                await _context.SaveChangesAsync();
-
-                order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
-            }
-
-            Product? product = await _context.Products.Include(x => x.ProductImages)
-                .SingleOrDefaultAsync(x => x.Id == vm.ProductId);
-
-            if (product == null) return NotFound("Product tapilmadi");
-            if (product.Count < vm.Quantity) return BadRequest($"Mehsuldan {product.Count} eded qalib.");
-
-            OrderItem? orderItem = await _context.OrderItems.SingleOrDefaultAsync(x => x.ProductId == vm.ProductId);
-            if (orderItem == null)
-            {
-                orderItem = new OrderItem
-                {
-                    ProductId = vm.ProductId,
-                    OrderId = order.Id,
-                    Quantity = 1,
-                    UnitPrice = product.Price
-                };
-                await _context.OrderItems.AddAsync(orderItem);
-            }
-            else
-            {
-                orderItem.Quantity = vm.Quantity;
-                orderItem.UnitPrice = vm.Quantity * product.Price;
-            }
+            _context.Orders.Add(newOrder);
             await _context.SaveChangesAsync();
 
-            order.TotalAmount = await _context.OrderItems
-                                        .Where(x => x.OrderId == order.Id)
-                                        .SumAsync(x => x.UnitPrice);
 
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
-        //Bu action sadece productun uzerine vurduqda isliyecek
-        [HttpPost("OneProductAdd")]
-        public async Task<IActionResult> OneProductAdd(OneProductAddVM vm)
-        {
-            if (!ModelState.IsValid) return Unauthorized(vm);
-
-            var user = await _userManager.FindByNameAsync(vm.Username);
-            if (user == null) return NotFound(vm.Username);
-
-            Order? order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
-            if (order == null)
-            {
-                var newOrder = new Order
-                {
-                    AppUserId = user.Id,
-                    IsActive = true
-                };
-
-                await _context.Orders.AddAsync(newOrder);
-                await _context.SaveChangesAsync();
-
-                order = await _context.Orders.SingleOrDefaultAsync(x => x.AppUserId == user.Id && x.IsActive);
-            }
-
-            Product? product = await _context.Products.SingleOrDefaultAsync(x => x.Id == vm.ProductId && x.IsStock);
-            if (product == null) return NotFound("Product tapilmadi");
-
-            OrderItem? orderItem = await _context.OrderItems.SingleOrDefaultAsync(x => x.ProductId == vm.ProductId);
-            if (orderItem == null)
-            {
-                orderItem = new OrderItem
-                {
-                    ProductId = vm.ProductId,
-                    OrderId = order.Id,
-                    Quantity = 1,
-                    UnitPrice = product.Price
-                };
-                await _context.OrderItems.AddAsync(orderItem);
-            }
-            else
-            {
-                orderItem.Quantity += 1;
-                orderItem.UnitPrice += product.Price;
-            }
-
-            order.TotalAmount += product.Price;
-
+            _context.Baskets.RemoveRange(baskets);
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
+        [HttpPost("AllOrders")]
+        public async Task<IActionResult> AllOrders(DashPagineVM vm)
+        {
+            var query = _context.Orders
+                .Include(p => p.AppUser)
+                .AsQueryable();
+
+            int totalCount = await query.CountAsync();
+            int take = vm.Take > 0 ? vm.Take : 20;
+            int totalPages = (int)Math.Ceiling(totalCount / (double)take);
+
+            int currentPage = vm.Page > 0 ? vm.Page : 1;
+
+            List<DashOrderDto> OrderDtos = await query
+                .OrderByDescending(p => p.CreateDate)
+                .Select(order => new DashOrderDto
+                {
+                    Username = order.AppUser.UserName,
+                    TotalAmount = order.TotalAmount,
+                    CreateDate = order.CreateDate
+                })
+                .Skip((currentPage - 1) * take)
+                .Take(take)
+                .ToListAsync();
+
+            return Ok(new Paginate<DashOrderDto>(OrderDtos, currentPage, totalPages));
+        }
+
+        [HttpPost("OrdersFilter")]
+        public async Task<IActionResult> OrdersFilter(DashOrderDateVM vm)
+        {
+            if (!ModelState.IsValid) return BadRequest(vm);
+
+            var query = _context.Orders
+                .Include(p => p.AppUser)
+                .Where(x => x.CreateDate >= vm.StartDate && x.CreateDate <= vm.EndDate)
+                .AsQueryable();
+
+            int totalCount = await query.CountAsync();
+            int take = vm.Take > 0 ? vm.Take : 20;
+            int totalPages = (int)Math.Ceiling(totalCount / (double)take);
+
+            int currentPage = vm.Page > 0 ? vm.Page : 1;
+
+            List<DashOrderDto> OrderDtos = await query
+                .OrderByDescending(p => p.CreateDate)
+                .Select(order => new DashOrderDto
+                {
+                    Username = order.AppUser.UserName,
+                    TotalAmount = order.TotalAmount,
+                    CreateDate = order.CreateDate
+                })
+                .Skip((currentPage - 1) * take)
+                .Take(take)
+                .ToListAsync();
+
+            return Ok(new Paginate<DashOrderDto>(OrderDtos, currentPage, totalPages));
+        }
+
+        [HttpPost("AllOrderItems")]
+        public async Task<IActionResult> AllOrderItems(DashPagineVM vm)
+        {
+            var query = _context.OrderItems
+                .AsQueryable();
+
+            int totalCount = await query.CountAsync();
+            int take = vm.Take > 0 ? vm.Take : 20;
+            int totalPages = (int)Math.Ceiling(totalCount / (double)take);
+
+            int currentPage = vm.Page > 0 ? vm.Page : 1;
+
+            List<DashOrderItemDto> orderItemDtos = await query
+                .OrderByDescending(p => p.CreateDate)
+                .Select(x => new DashOrderItemDto
+                {
+                    ProductName = x.ProductName,
+                    Quantity = x.Quantity,
+                    UnitePrice = x.UnitPrice
+                })
+                .Skip((currentPage - 1) * take)
+                .Take(take)
+                .ToListAsync();
+
+            return Ok(new Paginate<DashOrderItemDto>(orderItemDtos, currentPage, totalPages));
+        }
+
+        [HttpPost("OrderItemsFilter")]
+        public async Task<IActionResult> OrderItemsFilter(DashOrderDateVM vm)
+        {
+            if (!ModelState.IsValid) return BadRequest(vm);
+
+            var query = _context.OrderItems
+                .Where(x => x.CreateDate >= vm.StartDate && x.CreateDate <= vm.EndDate)
+                .AsQueryable();
+
+            int totalCount = await query.CountAsync();
+            int take = vm.Take > 0 ? vm.Take : 20;
+            int totalPages = (int)Math.Ceiling(totalCount / (double)take);
+
+            int currentPage = vm.Page > 0 ? vm.Page : 1;
+
+            List<DashOrderItemDto> orderItemDtos = await query
+                .OrderByDescending(p => p.CreateDate)
+                .Select(x => new DashOrderItemDto
+                {
+                    ProductName = x.ProductName,
+                    Quantity = x.Quantity,
+                    UnitePrice = x.UnitPrice
+                })
+                .Skip((currentPage - 1) * take)
+                .Take(take)
+                .ToListAsync();
+
+            return Ok(new Paginate<DashOrderItemDto>(orderItemDtos, currentPage, totalPages));
+        }
     }
 }
