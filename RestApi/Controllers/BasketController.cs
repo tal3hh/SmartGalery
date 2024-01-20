@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Basket;
-using ServiceLayer.Dtos.Order;
 using ServiceLayer.ViewModels;
 
-namespace Dashboard.Controllers
+namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,10 +21,9 @@ namespace Dashboard.Controllers
             _userManager = userManager;
         }
 
-
         //CARD sehifesine getdikde cixan basketler
-        [HttpPost("OrderBaskets")]
-        public async Task<IActionResult> OrderBaskets(string username)
+        [HttpPost("Baskets")]
+        public async Task<IActionResult> Baskets(string username)
         {
             if (username is null) return BadRequest(username);
 
@@ -99,7 +97,7 @@ namespace Dashboard.Controllers
                 _context.Baskets.Update(basket);
                 await _context.SaveChangesAsync();
 
-                return Ok("Sebetde mehsulun sayi artirildi.");
+                return Ok("Səbətdə məhsulun sayı dəyiŞildi.");
             }
         }
 

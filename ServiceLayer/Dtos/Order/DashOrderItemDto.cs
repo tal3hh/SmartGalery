@@ -9,6 +9,7 @@ namespace ServiceLayer.Dtos.Order
     public class DashOrderItemDto
     {
         public string? ProductName { get; set; }
+        public string? ByUsername { get; set; }
         public int Quantity { get; set; }
         public decimal UnitePrice { get; set; }
     }

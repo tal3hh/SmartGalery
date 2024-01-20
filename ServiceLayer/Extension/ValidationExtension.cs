@@ -15,7 +15,6 @@ using ServiceLayer.Dtos.Subscribe;
 using ServiceLayer.Validations;
 using ServiceLayer.Validations.Account;
 using ServiceLayer.Validations.Brand;
-using ServiceLayer.Validations.ModelView;
 using ServiceLayer.Validations.Order;
 using ServiceLayer.ViewModels;
 
@@ -58,9 +57,6 @@ namespace ServiceLayer.Extension
 
             services.AddScoped<IValidator<ShippingDto>, ShippingValidation>();
 
-            //Model View
-            services.AddScoped<IValidator<OneProductAddVM>, OneProductAddVMValidation>();
-            services.AddScoped<IValidator<ManyProductAddVM>, ManyProductAddVMValidation>();
         }
         
     }

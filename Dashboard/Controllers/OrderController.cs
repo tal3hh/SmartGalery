@@ -24,41 +24,6 @@ namespace Api.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost("OrderCreate")]
-        public async Task<IActionResult> OrderCreate(string username)
-        {
-            if (username is null) return BadRequest(username);
-
-            var user = await _userManager.FindByNameAsync(username);
-            if (user == null) return NotFound(username);
-
-            List<Basket>? baskets = await _context.Baskets.Include(x=> x.Product)
-                                                  .Where(x => x.AppUserId == user.Id).ToListAsync();
-
-            if (baskets.Count() == 0) return BadRequest("Sebet bosdur.");
-
-            Order newOrder = new Order
-            {
-                AppUserId = user.Id,
-                TotalAmount = baskets.Sum(basket => basket.Quantity * (basket.Product?.Price ?? 0)),
-                OrderItems = baskets.Select(basket => new OrderItem
-                {
-                    ProductName = basket.Product?.Name,
-                    Quantity = basket.Quantity,
-                    UnitPrice = basket.Product.Price * basket.Quantity
-                }).ToList()
-            };
-
-            _context.Orders.Add(newOrder);
-            await _context.SaveChangesAsync();
-
-
-            _context.Baskets.RemoveRange(baskets);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
         [HttpPost("AllOrders")]
         public async Task<IActionResult> AllOrders(DashPagineVM vm)
         {
@@ -90,7 +55,8 @@ namespace Api.Controllers
         [HttpPost("OrdersFilter")]
         public async Task<IActionResult> OrdersFilter(DashOrderDateVM vm)
         {
-            if (!ModelState.IsValid) return BadRequest(vm);
+            if (vm.StartDate > vm.EndDate)
+                (vm.StartDate, vm.EndDate) = (vm.EndDate, vm.StartDate);
 
             var query = _context.Orders
                 .Include(p => p.AppUser)
@@ -122,6 +88,7 @@ namespace Api.Controllers
         public async Task<IActionResult> AllOrderItems(DashPagineVM vm)
         {
             var query = _context.OrderItems
+                .Include(x=> x.Order)
                 .AsQueryable();
 
             int totalCount = await query.CountAsync();
@@ -134,6 +101,7 @@ namespace Api.Controllers
                 .OrderByDescending(p => p.CreateDate)
                 .Select(x => new DashOrderItemDto
                 {
+                    ByUsername = x.ByUsername,
                     ProductName = x.ProductName,
                     Quantity = x.Quantity,
                     UnitePrice = x.UnitPrice
@@ -148,7 +116,8 @@ namespace Api.Controllers
         [HttpPost("OrderItemsFilter")]
         public async Task<IActionResult> OrderItemsFilter(DashOrderDateVM vm)
         {
-            if (!ModelState.IsValid) return BadRequest(vm);
+            if (vm.StartDate > vm.EndDate)
+                (vm.StartDate, vm.EndDate) = (vm.EndDate, vm.StartDate);
 
             var query = _context.OrderItems
                 .Where(x => x.CreateDate >= vm.StartDate && x.CreateDate <= vm.EndDate)
@@ -164,6 +133,7 @@ namespace Api.Controllers
                 .OrderByDescending(p => p.CreateDate)
                 .Select(x => new DashOrderItemDto
                 {
+                    ByUsername = x.ByUsername,
                     ProductName = x.ProductName,
                     Quantity = x.Quantity,
                     UnitePrice = x.UnitPrice
