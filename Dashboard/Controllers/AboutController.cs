@@ -24,39 +24,29 @@ namespace Api.Controllers
         [HttpGet("{name}")]
         public async Task<IActionResult> Search(string name)
         {
+            if (string.IsNullOrEmpty(name)) return BadRequest(name);
+
             return Ok(await _AboutService.GetByNameAsync(name));
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(AboutCreateDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                             .Where(x => x.Value.Errors.Any())
-                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToList());
-                return BadRequest(errors);
-            }
-
+            if (!ModelState.IsValid) return BadRequest(dto);
+            
             await _AboutService.CreateAsync(dto);
 
-            return Ok(dto);
+            return Ok();
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(AboutUpdateDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                             .Where(x => x.Value.Errors.Any())
-                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToList());
-                return BadRequest(errors);
-            }
+            if (!ModelState.IsValid) return BadRequest(dto);
 
             await _AboutService.UpdateAsync(dto);
 
-            return Ok(dto);
+            return Ok();
         }
 
         [HttpDelete("{id}")]

@@ -35,7 +35,7 @@ namespace Api.Controllers
 
             await _ContactService.CreateAsync(dto);
 
-            return Ok(dto);
+            return Ok();
         }
 
         [HttpDelete("{id}")]

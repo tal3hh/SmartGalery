@@ -52,8 +52,8 @@ namespace Api.Controllers
             return Ok(new Paginate<DashOrderDto>(OrderDtos, currentPage, totalPages));
         }
 
-        [HttpPost("OrdersFilter")]
-        public async Task<IActionResult> OrdersFilter(DashOrderDateVM vm)
+        [HttpPost("OrderFilter")]
+        public async Task<IActionResult> OrderFilter(DashOrderDateVM vm)
         {
             if (vm.StartDate > vm.EndDate)
                 (vm.StartDate, vm.EndDate) = (vm.EndDate, vm.StartDate);
@@ -113,8 +113,8 @@ namespace Api.Controllers
             return Ok(new Paginate<DashOrderItemDto>(orderItemDtos, currentPage, totalPages));
         }
 
-        [HttpPost("OrderItemsFilter")]
-        public async Task<IActionResult> OrderItemsFilter(DashOrderDateVM vm)
+        [HttpPost("OrderItemFilter")]
+        public async Task<IActionResult> OrderItemFilter(DashOrderDateVM vm)
         {
             if (vm.StartDate > vm.EndDate)
                 (vm.StartDate, vm.EndDate) = (vm.EndDate, vm.StartDate);

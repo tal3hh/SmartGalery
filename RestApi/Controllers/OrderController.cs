@@ -21,8 +21,8 @@ namespace Api.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost("OrderCreate")]
-        public async Task<IActionResult> OrderCreate(string username)
+        [HttpPost("CreateOrder")]
+        public async Task<IActionResult> CreateOrder(string username)
         {
             if (username is null) return BadRequest(username);
 
@@ -51,8 +51,8 @@ namespace Api.Controllers
 
             foreach (var item in baskets)
             {
-                var product = await _context.Products.FindAsync(item.ProductId);
-                if (product != null)
+                Product? product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null && product.Count >= item.Quantity)
                     product.Count -= item.Quantity;
             }
 

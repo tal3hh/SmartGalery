@@ -91,17 +91,17 @@ namespace Api.Controllers
             return Ok(wishDtos);
         }
 
-        [HttpDelete("AllWishRemove")]
-        public async Task<IActionResult> AllWishRemove(string? username)
+        [HttpDelete("RemoveAllWish")]
+        public async Task<IActionResult> RemoveAllWish(string? username)
         {
             if (string.IsNullOrEmpty(username))
                 return BadRequest(nameof(username));
 
-            var user = await _userManager.FindByNameAsync(username);
+            AppUser? user = await _userManager.FindByNameAsync(username);
             if (user == null)
-                return NotFound(nameof(username));
+                return NotFound("İstifadəçi tapılmadı.");
 
-            var list = await _context.Wishes.Where(x=> x.AppUserId == user.Id).ToListAsync();
+            List<Wish> list = await _context.Wishes.Where(x=> x.AppUserId == user.Id).ToListAsync();
 
             foreach (var item in list)
             {

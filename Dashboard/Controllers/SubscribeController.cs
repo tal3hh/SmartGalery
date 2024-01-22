@@ -24,13 +24,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(SubscribeCreateDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                             .Where(x => x.Value.Errors.Any())
-                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToList());
-                return BadRequest(errors);
-            }
+            if (!ModelState.IsValid) return BadRequest(dto);
 
             await _SubscribeService.CreateAsync(dto);
 
