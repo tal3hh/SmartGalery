@@ -22,21 +22,6 @@ namespace Api.Controllers
             return Ok(await _ContactService.GetAllAsync());
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(ContactCreateDto dto)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                             .Where(x => x.Value.Errors.Any())
-                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToList());
-                return BadRequest(errors);
-            }
-
-            await _ContactService.CreateAsync(dto);
-
-            return Ok();
-        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

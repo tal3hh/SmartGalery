@@ -14,7 +14,9 @@ namespace ServiceLayer.Services.Interfaces
     public interface IProductService
     {
         //Dash
-        Task<Paginate<DashProductDto>> DashProductSearch(DashProductSearchVM vm);
+        Task<Paginate<DashProDto>> DashProductSearch(DashProductSearchVM vm);
+        Task<Paginate<DashProDto>> DashCategoryProduct(DashCategoryProductVM vm);
+        Task<DashProDetailDto?> DashProductDetail(int id);
 
         //Home
         Task<List<HomeProductDto>> HomeProductFilter(HomeProductFilterVM vm);

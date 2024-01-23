@@ -33,15 +33,12 @@ namespace ServiceLayer.Services
         #region Dashboard
 
         //Dahsboard Products Filter(and List)
-        public async Task<Paginate<DashProductDto>> DashProductSearch(DashProductSearchVM vm)
+        public async Task<Paginate<DashProDto>> DashProductSearch(DashProductSearchVM vm)
         {
             var query = _context.Products
-                .Include(p => p.Ratings)
-                .Include(p => p.Comments)
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages)
-                .Include(p => p.ProductDetails)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(vm.Search))
@@ -55,9 +52,44 @@ namespace ServiceLayer.Services
 
             int currentPage = vm.Page > 0 ? vm.Page : 1;
 
-            List<DashProductDto> productDtos = await query
+            List<DashProDto> productDtos = await query
                 .OrderByDescending(p => p.CreateDate)
-                .Select(p => new DashProductDto
+                .Select(p => new DashProDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    OldPrice = p.OldPrice,
+                    Count = p.Count,
+                    IsStock = p.IsStock,
+
+                    CategoryName = p.Category.Name,
+                    BrandName = p.Brand.Name,
+
+                    ProductImages = p.ProductImages.Select(pi => pi.Path).ToList(),
+                })
+                .Skip((currentPage - 1) * take)
+                .Take(take)
+                .ToListAsync();
+
+            return new Paginate<DashProDto>(productDtos, currentPage, totalPages);
+        }
+
+        //Dahsboard Products Details
+        public async Task<DashProDetailDto?> DashProductDetail(int id)
+        {
+            if (!await _context.Products.AnyAsync(x => x.Id == id))
+                return null;
+
+            DashProDetailDto? dto = await _context.Products
+                .Where(x => x.Id == id)
+                .Include(p => p.Ratings)
+                .Include(p => p.Comments)
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductDetails)
+                .Select(p => new DashProDetailDto
                 {
                     Id = p.Id,
                     Name = p.Name,
@@ -70,19 +102,55 @@ namespace ServiceLayer.Services
 
                     CategoryName = p.Category.Name,
                     BrandName = p.Brand.Name,
-                    CategoryId = p.Category.Id,
-                    BrandId = p.Brand.Id,
 
                     commentCount = p.Comments.Count(),
                     ProductImages = p.ProductImages.Select(pi => pi.Path).ToList(),
                     ProductDetails = p.ProductDetails.Select(pi => pi.Description).ToList(),
                     Rating = p.Ratings.Any() ? p.Ratings.Average(r => r.Star) : 0
+                }).SingleOrDefaultAsync();
+
+            return dto;
+        }
+
+        //Dahsboard Category Products Filter(and List)
+        public async Task<Paginate<DashProDto>> DashCategoryProduct(DashCategoryProductVM vm)
+        {
+            var query = _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .AsQueryable();
+
+            if (vm.CategoryId > 0)
+                query = query.Where(p => p.CategoryId == vm.CategoryId);
+
+            int totalCount = await query.CountAsync();
+            int take = vm.Take > 0 ? vm.Take : 10;
+            int totalPages = (int)Math.Ceiling(totalCount / (double)take);
+
+            int currentPage = vm.Page > 0 ? vm.Page : 1;
+
+            List<DashProDto> productDtos = await query
+                .OrderByDescending(p => p.CreateDate)
+                .Select(p => new DashProDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    OldPrice = p.OldPrice,
+                    Count = p.Count,
+                    IsStock = p.IsStock,
+
+                    CategoryName = p.Category.Name,
+                    BrandName = p.Brand.Name,
+
+                    ProductImages = p.ProductImages.Select(pi => pi.Path).ToList(),
                 })
                 .Skip((currentPage - 1) * take)
                 .Take(take)
                 .ToListAsync();
 
-            return new Paginate<DashProductDto>(productDtos, currentPage, totalPages);
+            return new Paginate<DashProDto>(productDtos, currentPage, totalPages);
         }
 
         #endregion
