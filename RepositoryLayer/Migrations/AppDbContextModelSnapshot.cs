@@ -308,6 +308,32 @@ namespace RepositoryLayer.Migrations
                     b.ToTable("OrderItems");
                 });
 
+            modelBuilder.Entity("DomainLayer.Entities.PasswordResetToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique()
+                        .HasFilter("[AppUserId] IS NOT NULL");
+
+                    b.ToTable("PasswordResetTokens");
+                });
+
             modelBuilder.Entity("DomainLayer.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -724,6 +750,15 @@ namespace RepositoryLayer.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("DomainLayer.Entities.PasswordResetToken", b =>
+                {
+                    b.HasOne("DomainLayer.Entities.AppUser", "AppUser")
+                        .WithOne("PasswordResetToken")
+                        .HasForeignKey("DomainLayer.Entities.PasswordResetToken", "AppUserId");
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("DomainLayer.Entities.Product", b =>
                 {
                     b.HasOne("DomainLayer.Entities.Brand", "Brand")
@@ -874,6 +909,8 @@ namespace RepositoryLayer.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Orders");
+
+                    b.Navigation("PasswordResetToken");
 
                     b.Navigation("Ratings");
 

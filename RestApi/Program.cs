@@ -31,10 +31,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
 {
     opt.Password.RequireNonAlphanumeric = false;  //Simvollardan biri olmalidir(@,/,$) 
-    opt.Password.RequireLowercase = false;       //Mutleq Kicik herf
-    opt.Password.RequireUppercase = false;       //Mutleq Boyuk herf 
+    opt.Password.RequireLowercase = true;       //Mutleq Kicik herf
+    opt.Password.RequireUppercase = true;       //Mutleq Boyuk herf 
     opt.Password.RequiredLength = 4;            //Min. simvol sayi
-    opt.Password.RequireDigit = false;
+    opt.Password.RequireDigit = false;          //Reqem lazimdir
 
     opt.User.RequireUniqueEmail = true;
 

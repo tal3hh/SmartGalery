@@ -16,7 +16,6 @@ using ServiceLayer.Validations;
 using ServiceLayer.Validations.Account;
 using ServiceLayer.Validations.Brand;
 using ServiceLayer.Validations.Order;
-using ServiceLayer.ViewModels;
 
 namespace ServiceLayer.Extension
 {
@@ -27,6 +26,7 @@ namespace ServiceLayer.Extension
             services.AddScoped<IValidator<UserCreateDto>, UserCreateValidation>();
             services.AddScoped<IValidator<UserLoginDto>, UserLoginValidation>();
             services.AddScoped<IValidator<RoleCreateDto>, RoleCreateValidation>();
+            services.AddScoped<IValidator<UserResetPassDto>, UserResetPassValidation>();
 
             services.AddScoped<IValidator<AboutCreateDto>, AboutCreateValidation>();
             services.AddScoped<IValidator<AboutUpdateDto>, AboutUpdateValidation>();

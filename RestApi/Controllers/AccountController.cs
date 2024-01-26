@@ -60,7 +60,7 @@ namespace Api.Controllers
                 string? code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 string? url = Url.Action(nameof(VerifyEmail), "Account", new { userId = user.Id, token = code }, Request.Scheme, Request.Host.ToString());
 
-                _messageSend.MimeKitConfrim(appUser, url, code);
+                _messageSend.MimeKitConfrim(appUser, url);
 
                 var roles = await _userManager.GetRolesAsync(user);
 

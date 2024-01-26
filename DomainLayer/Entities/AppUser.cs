@@ -12,6 +12,7 @@ namespace DomainLayer.Entities
         public string? Fullname { get; set; }
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
+        public PasswordResetToken? PasswordResetToken { get; set; }
         public List<Rating>? Ratings { get; set; }
         public List<Basket>? Baskets { get; set; }
         public List<Order>? Orders { get; set; }

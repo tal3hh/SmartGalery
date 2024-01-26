@@ -43,10 +43,13 @@ namespace RepositoryLayer.Contexts
             modelBuilder.Entity<Basket>().HasOne(x => x.AppUser).WithMany(x => x.Baskets).HasForeignKey(x => x.AppUserId);
             modelBuilder.Entity<Basket>().HasOne(x => x.Product).WithMany(x => x.Baskets).HasForeignKey(x => x.ProductId);
 
+            modelBuilder.Entity<PasswordResetToken>().HasOne(x => x.AppUser).WithOne(x => x.PasswordResetToken).HasForeignKey<PasswordResetToken>(x => x.AppUserId);
+
             base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Category> Categories { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<Product> Products { get; set; }
