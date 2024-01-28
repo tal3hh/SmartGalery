@@ -31,6 +31,7 @@ namespace ServiceLayer.Mapping
             CreateMap<Brand, BrandUpdateDto>().ReverseMap();
 
             CreateMap<About, AboutDto>().ReverseMap();
+            CreateMap<About, HomeAboutDto>().ReverseMap();
             CreateMap<About, AboutCreateDto>().ReverseMap();
             CreateMap<About, AboutUpdateDto>().ReverseMap();
 

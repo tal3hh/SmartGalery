@@ -153,6 +153,46 @@ namespace ServiceLayer.Services
             return new Paginate<DashProDto>(productDtos, currentPage, totalPages);
         }
 
+        //Dahsboard Brand Products Filter(and List)
+        public async Task<Paginate<DashProDto>> DashBrandProduct(DashBrandProductVM vm)
+        {
+            var query = _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .AsQueryable();
+
+            if (vm.BrandId > 0)
+                query = query.Where(p => p.BrandId == vm.BrandId);
+
+            int totalCount = await query.CountAsync();
+            int take = vm.Take > 0 ? vm.Take : 10;
+            int totalPages = (int)Math.Ceiling(totalCount / (double)take);
+
+            int currentPage = vm.Page > 0 ? vm.Page : 1;
+
+            List<DashProDto> productDtos = await query
+                .OrderByDescending(p => p.CreateDate)
+                .Select(p => new DashProDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    OldPrice = p.OldPrice,
+                    Count = p.Count,
+                    IsStock = p.IsStock,
+
+                    CategoryName = p.Category.Name,
+                    BrandName = p.Brand.Name,
+
+                    ProductImages = p.ProductImages.Select(pi => pi.Path).ToList(),
+                })
+                .Skip((currentPage - 1) * take)
+                .Take(take)
+                .ToListAsync();
+
+            return new Paginate<DashProDto>(productDtos, currentPage, totalPages);
+        }
         #endregion
 
 

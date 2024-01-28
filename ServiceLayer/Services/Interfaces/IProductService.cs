@@ -16,6 +16,7 @@ namespace ServiceLayer.Services.Interfaces
         //Dash
         Task<Paginate<DashProDto>> DashProductSearch(DashProductSearchVM vm);
         Task<Paginate<DashProDto>> DashCategoryProduct(DashCategoryProductVM vm);
+        Task<Paginate<DashProDto>> DashBrandProduct(DashBrandProductVM vm);
         Task<DashProDetailDto?> DashProductDetail(int id);
 
         //Home

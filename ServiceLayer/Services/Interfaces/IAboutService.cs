@@ -11,7 +11,7 @@ namespace ServiceLayer.Services.Interfaces
     public interface IAboutService
     {
         Task<List<AboutDto>> GetAllAsync();
-        Task<AboutDto> GetByIdAsync(int id);
+        Task<List<HomeAboutDto>> HomeGetAllAsync();
         Task<List<AboutDto>> GetByNameAsync(string name);
         Task CreateAsync(AboutCreateDto dto);
         Task UpdateAsync(AboutUpdateDto dto);

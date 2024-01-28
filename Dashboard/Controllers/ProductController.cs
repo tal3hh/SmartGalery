@@ -28,10 +28,16 @@ namespace Dashboard.Controllers
             return Ok(await _ProductService.DashProductSearch(vm));
         }
 
-        [HttpPost("DashFilter")]
+        [HttpPost("DashCategoryFilter")]
         public async Task<IActionResult> DashCategoryProduct(DashCategoryProductVM vm)
         {
             return Ok(await _ProductService.DashCategoryProduct(vm));
+        }
+
+        [HttpPost("DashBrandFilter")]
+        public async Task<IActionResult> DashBrandProduct(DashBrandProductVM vm)
+        {
+            return Ok(await _ProductService.DashBrandProduct(vm));
         }
 
         [HttpPost("DashProductDetail")]

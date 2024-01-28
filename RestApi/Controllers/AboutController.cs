@@ -18,7 +18,7 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _AboutService.GetAllAsync());
+            return Ok(await _AboutService.HomeGetAllAsync());
         }
     }
 }

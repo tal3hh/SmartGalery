@@ -19,6 +19,12 @@ namespace ServiceLayer.Services
             _mapper = mapper;
         }
 
+        public async Task<List<HomeAboutDto>> HomeGetAllAsync()
+        {
+            List<About>? list = await _context.Abouts.AsNoTracking().ToListAsync();
+
+            return _mapper.Map<List<HomeAboutDto>>(list);
+        }
 
         public async Task<List<AboutDto>> GetAllAsync()
         {
@@ -27,13 +33,6 @@ namespace ServiceLayer.Services
             return _mapper.Map<List<AboutDto>>(list);
         }
 
-
-        public async Task<AboutDto> GetByIdAsync(int id)
-        {
-            About? entity = await _context.Abouts.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
-            
-            return _mapper.Map<AboutDto>(entity);
-        }
 
         public async Task<List<AboutDto>> GetByNameAsync(string name)
         {
