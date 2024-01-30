@@ -36,7 +36,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<AboutDto>> GetByNameAsync(string name)
         {
-            List<About>? entity = await _context.Abouts.AsNoTracking().Where(x => x.Title == name).ToListAsync();
+            List<About>? entity = await _context.Abouts.AsNoTracking().Where(x => x.Title.Contains(name)).ToListAsync();
 
             return _mapper.Map<List<AboutDto>>(entity);
         }

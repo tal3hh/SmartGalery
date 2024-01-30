@@ -21,12 +21,12 @@ namespace Api.Controllers
             return Ok(await _AboutService.GetAllAsync());
         }
 
-        [HttpGet("{name}")]
-        public async Task<IActionResult> Search(string name)
+        [HttpGet("{title}")]
+        public async Task<IActionResult> Search(string title)
         {
-            if (string.IsNullOrEmpty(name)) return BadRequest(name);
+            if (string.IsNullOrEmpty(title)) return BadRequest(title);
 
-            return Ok(await _AboutService.GetByNameAsync(name));
+            return Ok(await _AboutService.GetByNameAsync(title));
         }
 
         [HttpPost]
