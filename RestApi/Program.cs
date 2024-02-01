@@ -48,7 +48,6 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
 
 #endregion
 
-
 #region JWT
 builder.Services.AddAuthentication(options =>
 {
@@ -69,7 +68,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 #endregion
-
 
 #region Cookie
 

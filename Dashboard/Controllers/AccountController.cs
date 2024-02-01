@@ -10,6 +10,7 @@ using System.Net;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
@@ -97,7 +98,7 @@ namespace Api.Controllers
             if (identity.Succeeded)
             {
 
-                await _userManager.AddToRoleAsync(user, "Member");
+                await _userManager.AddToRoleAsync(user, "Admin");
 
                 AppUser? appUser = await _userManager.FindByEmailAsync(user.Email);
 

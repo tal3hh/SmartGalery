@@ -6,7 +6,7 @@ using ServiceLayer.Services.Interfaces;
 
 namespace Api.Controllers
 {
-    
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase

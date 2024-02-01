@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.ProductDetail;
@@ -6,6 +7,7 @@ using ServiceLayer.Services.Interfaces;
 
 namespace Dashboard.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductDetailController : ControllerBase

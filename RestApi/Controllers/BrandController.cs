@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Dtos.Brand;
 using ServiceLayer.Services.Interfaces;
+using System.Data;
 
 namespace Api.Controllers
 {
