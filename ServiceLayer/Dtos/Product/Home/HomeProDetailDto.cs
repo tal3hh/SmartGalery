@@ -11,6 +11,7 @@ namespace ServiceLayer.Dtos.Product.Home
         public string? Name { get; set; }
         public string? Color { get; set; }
         public string? About { get; set; }
+        public decimal Price { get; set; }
 
         public List<string>? ProductImages { get; set; }
         public List<string>? ProductDetails { get; set; }

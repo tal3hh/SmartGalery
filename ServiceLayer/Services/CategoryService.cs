@@ -21,7 +21,7 @@ namespace ServiceLayer.Services
 
         public async Task<List<CategoryDto>> GetAllAsync()
         {
-            var list = await _context.Set<Category>().AsNoTracking().ToListAsync();
+            var list = await _context.Set<Category>().Include(x=> x.Products).AsNoTracking().ToListAsync();
 
             return _mapper.Map<List<CategoryDto>>(list);
         }

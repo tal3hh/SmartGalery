@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Dtos.Product;
 using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels;
@@ -22,10 +23,28 @@ namespace Dashboard.Controllers
             return Ok(await _ProductService.GetAllAsync());
         }
 
-        [HttpPost("DashProductSearch")]
-        public async Task<IActionResult> DashProductSearch(DashProductSearchVM vm)
+        [HttpPost("SearchDashProduct")]
+        public async Task<IActionResult> SearchDashProduct(DashProductSearchVM vm)
         {
             return Ok(await _ProductService.DashProductSearch(vm));
+        }
+
+        [HttpPost("DashCategoryFilter")]
+        public async Task<IActionResult> DashCategoryProduct(DashCategoryProductVM vm)
+        {
+            return Ok(await _ProductService.DashCategoryProduct(vm));
+        }
+
+        [HttpPost("DashBrandFilter")]
+        public async Task<IActionResult> DashBrandProduct(DashBrandProductVM vm)
+        {
+            return Ok(await _ProductService.DashBrandProduct(vm));
+        }
+
+        [HttpPost("DashProductDetail")]
+        public async Task<IActionResult> DashProductDetail(int id)
+        {
+            return Ok(await _ProductService.DashProductDetail(id));
         }
 
         [HttpPost]

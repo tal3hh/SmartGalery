@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "sG+GHR6gAgug9rxt9o+Uk5WuhxeKBUarpZk2/sSiWUAKQd6ubr0fSoqzY9dlQTHkWhVY3dV7s02Wg5sQVWOMeg==",
+  "dgSpecHash": "qOo6Vc7oRFBqjAZAhNmmWcd4ycU9K//HRxdqfj3WaY4Xbe3fDlQ1ODJx3kT/irU8bs5RlJX3L0SYsn4520WLYQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\RepositoryLayer\\RepositoryLayer.csproj",
+  "projectFilePath": "C:\\Users\\HP\\Desktop\\smartgalery\\SmartGalery-basket\\RepositoryLayer\\RepositoryLayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

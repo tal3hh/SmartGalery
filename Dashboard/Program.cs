@@ -9,45 +9,32 @@ using RepositoryLayer.Contexts;
 using RepositoryLayer.UniteOfWork;
 using ServiceLayer.Extension;
 using ServiceLayer.Mapping;
+using ServiceLayer.Utilities;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
 
 //Extension
 builder.Services.AddValidation();
 builder.Services.AddServices();
 
+#region AutoMapper
 
-builder.Services.AddControllers();
+var configuration = new MapperConfiguration(x =>
+{
+    x.AddProfile(new MappingProofile());
+});
+var mapper = configuration.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
-builder.Services.AddFluentValidationAutoValidation();
+#endregion
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-
-#region Identity
-
-builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
-{
-    opt.Password.RequireNonAlphanumeric = false;  //Simvollardan biri olmalidir(@,/,$) 
-    opt.Password.RequireLowercase = false;       //Mutleq Kicik herf
-    opt.Password.RequireUppercase = false;       //Mutleq Boyuk herf 
-    opt.Password.RequiredLength = 4;            //Min. simvol sayi
-    opt.Password.RequireDigit = false;
-
-    opt.User.RequireUniqueEmail = true;
-
-    opt.SignIn.RequireConfirmedEmail = true;
-    opt.SignIn.RequireConfirmedAccount = false;
-
-    //opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1); //Sifreni 5 defe sehv girdikde hesab 1dk baglanir.
-    //opt.Lockout.MaxFailedAccessAttempts = 5;                      //Sifreni max. 5defe sehv girmek olar.
-
-}).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
-
-#endregion
-
+builder.Services.AddFluentValidationAutoValidation();
 
 #region JWT
 builder.Services.AddAuthentication(options =>
@@ -70,6 +57,26 @@ builder.Services.AddAuthentication(options =>
 });
 #endregion
 
+#region Identity
+builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
+{
+    opt.Password.RequireNonAlphanumeric = false;  //Simvollardan biri olmalidir(@,/,$) 
+    opt.Password.RequireLowercase = true;       //Mutleq Kicik herf
+    opt.Password.RequireUppercase = true;       //Mutleq Boyuk herf 
+    opt.Password.RequiredLength = 4;            //Min. simvol sayi
+    opt.Password.RequireDigit = false;          //Reqem lazimdir
+
+    opt.User.RequireUniqueEmail = true;
+
+    opt.SignIn.RequireConfirmedEmail = true;
+    opt.SignIn.RequireConfirmedAccount = false;
+
+    //opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1); //Sifreni 5 defe sehv girdikde hesab 1dk baglanir.
+    //opt.Lockout.MaxFailedAccessAttempts = 5;                      //Sifreni max. 5defe sehv girmek olar.
+
+}).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
+#endregion
 
 #region Cookie
 
@@ -78,7 +85,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.Cookie.HttpOnly = true;
     opt.Cookie.SameSite = SameSiteMode.Strict;
     opt.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    opt.Cookie.Name = "AshionIdentity";
+    opt.Cookie.Name = "SmartGalery";
     opt.LoginPath = new PathString("/Account/Login");
     opt.AccessDeniedPath = new PathString("/Account/AccessDenied");
 
@@ -86,25 +93,12 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 #endregion
 
-
 #region Context
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration["ConnectionStrings:Mssql"]);
 });
-
-#endregion
-
-
-#region AutoMapper
-
-var configuration = new MapperConfiguration(x =>
-{
-    x.AddProfile(new MappingProofile());
-});
-var mapper = configuration.CreateMapper();
-builder.Services.AddSingleton(mapper);
 
 #endregion
 
@@ -121,6 +115,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<RequestResponseMiddleware>();
 
 app.UseStaticFiles();
 app.UseRouting();

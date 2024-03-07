@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Vwk1FW4gq5bE4lQKgGqyIPruwr76DN8mLEoZ2NbxCbFqz1AY169h+klkTsl66998O7/aelGSh0mJiCt9PUs3wA==",
+  "dgSpecHash": "0luwtOk6ai8GtsZqAkv9H9M/ymQaPSV/sgqEMpKkke1ImSPEGd09PL+QlPT94MHk8eajQqnLH+HaBYCzgQ312g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\DomainLayer\\DomainLayer.csproj",
+  "projectFilePath": "C:\\Users\\HP\\Desktop\\smartgalery\\SmartGalery-basket\\DomainLayer\\DomainLayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

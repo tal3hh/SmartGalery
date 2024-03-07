@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Dtos.Contact;
 using ServiceLayer.Services.Interfaces;
@@ -22,21 +23,6 @@ namespace Api.Controllers
             return Ok(await _ContactService.GetAllAsync());
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(ContactCreateDto dto)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                             .Where(x => x.Value.Errors.Any())
-                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToList());
-                return BadRequest(errors);
-            }
-
-            await _ContactService.CreateAsync(dto);
-
-            return Ok(dto);
-        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

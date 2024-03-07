@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Account;
-using ServiceLayer.Services;
 using ServiceLayer.Services.Interfaces;
-using ServiceLayer.ViewModels;
-using System.Security.Principal;
+using System.Net.Mail;
+using System.Net;
+using System.Net;
+using System.Net.Mail;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
@@ -18,16 +21,18 @@ namespace Api.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly AppDbContext _context;
         private readonly IMessageSend _messageSend;
         private readonly ITokenService _tokenService;
 
-        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, IMessageSend messageSend, ITokenService tokenService)
+        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, IMessageSend messageSend, ITokenService tokenService, AppDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _messageSend = messageSend;
             _tokenService = tokenService;
+            _context = context;
         }
 
         #region Login
@@ -93,16 +98,16 @@ namespace Api.Controllers
             if (identity.Succeeded)
             {
 
-                await _userManager.AddToRoleAsync(user, "Member");
+                await _userManager.AddToRoleAsync(user, "Admin");
 
                 AppUser? appUser = await _userManager.FindByEmailAsync(user.Email);
 
                 if (appUser == null) return NotFound(dto);
 
-                string? code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                string? url = Url.Action(nameof(VerifyEmail), "Account", new { userId = user.Id, token = code }, Request.Scheme, Request.Host.ToString());
+                string? token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string? url = Url.Action(nameof(VerifyEmail), "Account", new { userId = user.Id, token = token }, Request.Scheme, Request.Host.ToString());
 
-                _messageSend.MimeKitConfrim(appUser, url, code);
+                _messageSend.MimeKitConfrim(appUser, url);
 
                 return Ok(dto);
             }
@@ -184,47 +189,40 @@ namespace Api.Controllers
         [HttpDelete("User/{UsernameorEmail}")]
         public async Task<IActionResult> UserRemove(string UsernameorEmail)
         {
-            if (UsernameorEmail != null)
+            if (UsernameorEmail is null) return BadRequest("E-mail yada istifadəçi adını daxil edin.");
+            var user = new AppUser();
+
+            user = await _userManager.FindByNameAsync(UsernameorEmail);
+            if (user == null)
+                user = await _userManager.FindByEmailAsync(UsernameorEmail);
+
+            if (user != null)
             {
-                var user = new AppUser();
-
-                user = await _userManager.FindByNameAsync(UsernameorEmail);
-                if (user == null)
-                    user = await _userManager.FindByEmailAsync(UsernameorEmail);
-
-                if (user != null)
-                {
-                    await _userManager.DeleteAsync(user);
-                    return Ok("Istifadeci silindi");
-                }
-                return NotFound("Istifadeci tapilmadi.");
+                await _userManager.DeleteAsync(user);
+                return Ok("İstifadəçi silindi.");
             }
-
-            return Unauthorized("UsernameorEmail bosdur");
+            return NotFound("İstifadəçi tapılmadı.");
         }
 
         [HttpDelete("Role/{name}")]
         public async Task<IActionResult> RoleRemove(string name)
         {
-            if (name != null)
-            {
-                var role = await _roleManager.FindByNameAsync(name);
-                
-                if (role != null)
-                {
-                    await _roleManager.DeleteAsync(role);
-                    return Ok("Role silindi");
-                }
-                return NotFound("Role tapilmadi.");
-            }
+            if (name is null) return BadRequest("Ad boş olmamalıdır.");
 
-            return Unauthorized("Name bosdur");
+            var role = await _roleManager.FindByNameAsync(name);
+
+            if (role != null)
+            {
+                await _roleManager.DeleteAsync(role);
+                return Ok("Role silindi");
+            }
+            return NotFound("Role taılmadı.");
         }
         #endregion
 
         #region ResetPassword
         [HttpPost("ResetPassword")]
-        public async Task<IActionResult> ResetPassword(UserResetPassVM vm)
+        public async Task<IActionResult> ResetPassword(UserResetPassDto vm)
         {
             if (!ModelState.IsValid) return BadRequest(vm);
 
@@ -246,50 +244,80 @@ namespace Api.Controllers
 
         //Hazir DEYIL
         #region ForgotPassowrd
-        //[HttpPost("ForgotPassword")]
-        //public async Task<IActionResult> ForgotPassword(string email)
-        //{
-        //    if (string.IsNullOrEmpty(email)) return BadRequest("Email tələb olunur.");
 
-        //    AppUser? user = await _userManager.FindByEmailAsync(email);
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model)
+        {
+            AppUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Email == model.Email);
 
-        //    if (user == null) return NotFound($"Email '{email}' ilə istifadəçi tapılmadı.");
-        //    if (!(await _userManager.IsEmailConfirmedAsync(user))) return BadRequest("Email təsdiqlənməyib.");
+            if (user is null) return NotFound("User not found");
+            
+            string? token = Guid.NewGuid().ToString("N");
 
-        //    string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var dbToken = await _context.PasswordResetTokens.SingleOrDefaultAsync(x => x.AppUserId == user.Id);
+            if (dbToken != null)
+            {
+                _context.PasswordResetTokens.Remove(dbToken);
+                await _context.SaveChangesAsync();
+            }
 
-        //    var url = Url.Action("ForgotResetPassword", "Account", new { email = email, token = code }, Request.Scheme);
+            var resetToken = new PasswordResetToken { AppUserId = user.Id, Token = token };
+            await _context.PasswordResetTokens.AddAsync(resetToken);
+            await _context.SaveChangesAsync();
 
-        //    // E-poçt göndərmə prosesi
-        //    _messageSend.MimeMessageResetPassword(user, url, code);
+            var resetLink = $"http://your-app.com/reset-password?token={token}";
+            //SendResetEmail(model.Email, resetLink);
+            _messageSend.MimeMessageResetPassword(user, resetLink);
 
-        //    return Ok("Şifrə sıfırlama linki e-poçtunuza göndərildi.");
-        //}
+            return Ok("Password reset link sent to your email");
+        }
 
-        //[HttpPost("ForgotResetPassword")]
-        //public async Task<IActionResult> ForgotResetPassword([FromQuery] string token, string email, string password)
-        //{
-        //    if (email == null || token == null) return BadRequest("Email və token tələb olunur.");
+        [HttpPost("ForgotResetPassword")]
+        public async Task<IActionResult> ForgotResetPassword(ResetPasswordDto model)
+        {
+            var resetToken = _context.PasswordResetTokens
+                                     .Include(t => t.AppUser)
+                                     .SingleOrDefault(t => t.Token == model.Token);
 
-        //    AppUser? user = await _userManager.FindByEmailAsync(email);
+            if (resetToken == null || resetToken.IsExpired) return BadRequest("Invalid or expired token");
 
-        //    if (user == null) return NotFound($"Email '{email}' ilə istifadəçi tapılmadı.");
+            // Update the user's password
+            var result = await _userManager.ChangePasswordAsync(resetToken.AppUser,resetToken.AppUser.PasswordHash,model.NewPassword);
 
-        //    // Token'ın doğruluğu yoxlanılır
-        //    var result = await _userManager.ResetPasswordAsync(user, token, password);
+            // Delete the used reset token
+            _context.PasswordResetTokens.Remove(resetToken);
+            await _context.SaveChangesAsync();
 
-        //    if (result.Succeeded)
-        //    {
-        //        return Ok("Şifrə uğurla sıfırlanıb.");
-        //    }
+            return Ok("Password reset successfully");
+        }
 
-        //    // Hata halları üçün daha spesifik xəbərlər əlavə olunur
-        //    foreach (var error in result.Errors)
-        //    {
-        //        ModelState.AddModelError("", error.Description);
-        //    }
-        //    return BadRequest("Şifrə sıfırlama uğursuz oldu.");
-        //}
+        private void SendResetEmail(string email, string resetLink)
+        {
+            var fromAddress = new MailAddress("your_email@example.com", "Your Name");
+            var toAddress = new MailAddress(email);
+            const string fromPassword = "your_email_password";
+            const string subject = "Password Reset";
+            string body = $"Click the following link to reset your password: {resetLink}";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.example.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body
+            })
+            {
+                smtp.Send(message);
+            }
+        }
         #endregion
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\DomainLayer\\DomainLayer.csproj": {}
+    "C:\\Users\\HP\\Desktop\\smartgalery\\SmartGalery-basket\\DomainLayer\\DomainLayer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\DomainLayer\\DomainLayer.csproj": {
+    "C:\\Users\\HP\\Desktop\\smartgalery\\SmartGalery-basket\\DomainLayer\\DomainLayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\DomainLayer\\DomainLayer.csproj",
+        "projectUniqueName": "C:\\Users\\HP\\Desktop\\smartgalery\\SmartGalery-basket\\DomainLayer\\DomainLayer.csproj",
         "projectName": "DomainLayer",
-        "projectPath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\DomainLayer\\DomainLayer.csproj",
+        "projectPath": "C:\\Users\\HP\\Desktop\\smartgalery\\SmartGalery-basket\\DomainLayer\\DomainLayer.csproj",
         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HP\\Desktop\\Shopping\\Shopping\\DomainLayer\\obj\\",
+        "outputPath": "C:\\Users\\HP\\Desktop\\smartgalery\\SmartGalery-basket\\DomainLayer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

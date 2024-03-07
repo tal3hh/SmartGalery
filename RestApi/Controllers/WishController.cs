@@ -1,4 +1,5 @@
 ﻿using DomainLayer.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -9,6 +10,7 @@ using ServiceLayer.ViewModels;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WishController : ControllerBase
@@ -23,15 +25,15 @@ namespace Api.Controllers
         }
 
         [HttpPost("AddMyWish")]
-        public async Task<IActionResult> AddMyWish(MyWishVM vm)
+        public async Task<IActionResult> AddMyWish(AddMyWishVM vm)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(vm);
 
             var user = await _userManager.FindByNameAsync(vm.Username);
-            if (user == null) return NotFound(vm.Username);
+            if (user == null) return NotFound("İstifadəçi tapılmadı.");
 
             Product? product = await _context.Products.FindAsync(vm.ProductId);
-            if (product == null) return NotFound(vm.ProductId);
+            if (product == null) return NotFound("Məhsul tapılmadı.");
 
             Wish? wish = await _context.Wishes.Where(x => x.ProductId == vm.ProductId).SingleOrDefaultAsync();
             if (wish is null)
@@ -51,24 +53,24 @@ namespace Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return Ok();
+            return Ok("Əlavə olundu.");
         }
 
         [HttpPost("MyWishList")]
         public async Task<IActionResult> MyWishList(string? username)
         {
             if (string.IsNullOrEmpty(username))
-                return BadRequest(nameof(username));
+                return BadRequest("İstifadəçi adını daxil edin.");
 
-            var user = await _userManager.FindByNameAsync(username);
+            AppUser? user = await _userManager.FindByNameAsync(username);
             if (user == null)
-                return NotFound(nameof(username));
+                return NotFound("İstifadəçi tapılmadı.");
 
-            var wishesExist = await _context.Wishes.AnyAsync(x => x.AppUserId == user.Id);
+            bool wishesExist = await _context.Wishes.AnyAsync(x => x.AppUserId == user.Id);
             if (!wishesExist)
-                return Ok();
+                return Ok("Səbət Boşdur.");
 
-            var wishDtos = new List<HomeWishDto>();
+            List<HomeWishDto> wishDtos = new();
 
             wishDtos = await _context.Wishes
                                   .Where(x => x.AppUserId == user.Id)
@@ -91,17 +93,17 @@ namespace Api.Controllers
             return Ok(wishDtos);
         }
 
-        [HttpDelete("AllWishRemove")]
-        public async Task<IActionResult> AllWishRemove(string? username)
+        [HttpDelete("RemoveAllWish")]
+        public async Task<IActionResult> RemoveAllWish(string? username)
         {
             if (string.IsNullOrEmpty(username))
-                return BadRequest(nameof(username));
+                return BadRequest("İstifadəçi adını daxil edin.");
 
-            var user = await _userManager.FindByNameAsync(username);
+            AppUser? user = await _userManager.FindByNameAsync(username);
             if (user == null)
-                return NotFound(nameof(username));
+                return NotFound("İstifadəçi tapılmadı.");
 
-            var list = await _context.Wishes.Where(x=> x.AppUserId == user.Id).ToListAsync();
+            List<Wish> list = await _context.Wishes.Where(x => x.AppUserId == user.Id).ToListAsync();
 
             foreach (var item in list)
             {

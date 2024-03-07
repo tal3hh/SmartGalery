@@ -42,6 +42,9 @@ namespace Api.Controllers
                 PhoneNumber = dto.Number
             };
 
+            var userEmail = await _userManager.FindByEmailAsync(user.Email);
+            if (userEmail != null) return BadRequest("Bu email artiq istifade olunub.");
+
             IdentityResult identity = await _userManager.CreateAsync(user, dto.Password);
 
             if (identity.Succeeded)
@@ -60,7 +63,7 @@ namespace Api.Controllers
                 string? code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 string? url = Url.Action(nameof(VerifyEmail), "Account", new { userId = user.Id, token = code }, Request.Scheme, Request.Host.ToString());
 
-                _messageSend.MimeKitConfrim(appUser, url, code);
+                _messageSend.MimeKitConfrim(appUser, url);
 
                 var roles = await _userManager.GetRolesAsync(user);
 

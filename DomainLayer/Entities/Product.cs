@@ -24,7 +24,7 @@ namespace DomainLayer.Entities
         //Rlation Property
         public Category? Category { get; set; }
         public Brand? Brand { get; set; }
-        public List<OrderItem>? OrderItems { get; set; }
+        public List<Basket>? Baskets { get; set; }
         public List<Rating>? Ratings { get; set; }
         public List<ProductImage>? ProductImages { get; set; }
         public List<Comment>? Comments { get; set; }

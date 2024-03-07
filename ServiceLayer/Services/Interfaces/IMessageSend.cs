@@ -9,7 +9,7 @@ namespace ServiceLayer.Services.Interfaces
 {
     public interface IMessageSend
     {
-        void MimeMessageResetPassword(AppUser user, string url, string code);
-        void MimeKitConfrim(AppUser appUser, string url, string token);
+        void MimeMessageResetPassword(AppUser user, string url);
+        void MimeKitConfrim(AppUser appUser, string url);
     }
 }

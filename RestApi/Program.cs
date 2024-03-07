@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Contexts;
 using RepositoryLayer.UniteOfWork;
+using Serilog;
 using ServiceLayer.Extension;
 using ServiceLayer.Mapping;
+using ServiceLayer.Utilities;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddValidation();
 builder.Services.AddServices();
 
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
 
 builder.Services.AddControllers();
 
@@ -31,10 +35,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
 {
     opt.Password.RequireNonAlphanumeric = false;  //Simvollardan biri olmalidir(@,/,$) 
-    opt.Password.RequireLowercase = false;       //Mutleq Kicik herf
-    opt.Password.RequireUppercase = false;       //Mutleq Boyuk herf 
+    opt.Password.RequireLowercase = true;       //Mutleq Kicik herf
+    opt.Password.RequireUppercase = true;       //Mutleq Boyuk herf 
     opt.Password.RequiredLength = 4;            //Min. simvol sayi
-    opt.Password.RequireDigit = false;
+    opt.Password.RequireDigit = false;          //Reqem lazimdir
 
     opt.User.RequireUniqueEmail = true;
 
@@ -47,7 +51,6 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
 }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
 #endregion
-
 
 #region JWT
 builder.Services.AddAuthentication(options =>
@@ -70,7 +73,6 @@ builder.Services.AddAuthentication(options =>
 });
 #endregion
 
-
 #region Cookie
 
 builder.Services.ConfigureApplicationCookie(opt =>
@@ -86,7 +88,6 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 #endregion
 
-
 #region Context
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -95,7 +96,6 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 });
 
 #endregion
-
 
 #region AutoMapper
 
@@ -108,19 +108,22 @@ builder.Services.AddSingleton(mapper);
 
 #endregion
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
 
+//}
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseHttpsRedirection();
+
+//app.UseMiddleware<RequestResponseMiddleware>();
 
 app.UseStaticFiles();
 app.UseRouting();

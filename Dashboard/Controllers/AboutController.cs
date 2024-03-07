@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Dtos.About;
 using ServiceLayer.Services.Interfaces;
 
 namespace Api.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class AboutController : ControllerBase
@@ -21,42 +23,32 @@ namespace Api.Controllers
             return Ok(await _AboutService.GetAllAsync());
         }
 
-        [HttpGet("{name}")]
-        public async Task<IActionResult> Search(string name)
+        [HttpGet("{title}")]
+        public async Task<IActionResult> Search(string title)
         {
-            return Ok(await _AboutService.GetByNameAsync(name));
+            if (string.IsNullOrEmpty(title)) return BadRequest(title);
+
+            return Ok(await _AboutService.GetByNameAsync(title));
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(AboutCreateDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                             .Where(x => x.Value.Errors.Any())
-                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToList());
-                return BadRequest(errors);
-            }
-
+            if (!ModelState.IsValid) return BadRequest(dto);
+            
             await _AboutService.CreateAsync(dto);
 
-            return Ok(dto);
+            return Ok();
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(AboutUpdateDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                             .Where(x => x.Value.Errors.Any())
-                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToList());
-                return BadRequest(errors);
-            }
+            if (!ModelState.IsValid) return BadRequest(dto);
 
             await _AboutService.UpdateAsync(dto);
 
-            return Ok(dto);
+            return Ok();
         }
 
         [HttpDelete("{id}")]

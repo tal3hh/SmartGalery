@@ -11,8 +11,6 @@ namespace DomainLayer.Entities
     {
         public string? AppUserId { get; set; }
         public AppUser? AppUser { get; set; }
-        public DateTime OrderDate { get; set; }
-        public bool IsActive { get; set; }
         public decimal TotalAmount { get; set; }
 
         //public int OrderStatusId { get; set; }

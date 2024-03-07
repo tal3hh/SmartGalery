@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Dtos.About;
 using ServiceLayer.Services.Interfaces;
 
@@ -18,7 +19,7 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _AboutService.GetAllAsync());
+            return Ok(await _AboutService.HomeGetAllAsync());
         }
     }
 }
