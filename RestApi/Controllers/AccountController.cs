@@ -6,6 +6,7 @@ using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Account;
 using ServiceLayer.Services;
 using ServiceLayer.Services.Interfaces;
+using ServiceLayer.Utilities;
 
 namespace Api.Controllers
 {
@@ -32,7 +33,7 @@ namespace Api.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserCreateDto dto)
         {
-            if (!ModelState.IsValid) return BadRequest(dto);
+            if (!ModelState.IsValid) return BadRequest(new ResultDto<UserCreateDto>(false,"Validation error" , dto));
 
             var user = new AppUser
             {
@@ -43,7 +44,8 @@ namespace Api.Controllers
             };
 
             var userEmail = await _userManager.FindByEmailAsync(user.Email);
-            if (userEmail != null) return BadRequest("Bu email artiq istifade olunub.");
+
+            if (userEmail != null) return BadRequest(new ResultDto<UserCreateDto>(false, "Bu email artiq istifade olunub.", null));
 
             IdentityResult identity = await _userManager.CreateAsync(user, dto.Password);
 
@@ -69,26 +71,26 @@ namespace Api.Controllers
 
                 var token = _tokenService.GenerateJwtToken(user.UserName, (List<string>)roles);
 
-                return Ok(dto);
+                return Ok(new ResultDto<UserCreateDto>(true, "E-mailə gələn mesaji təsdiq edin.", dto));
             }
 
             foreach (var error in identity.Errors)
             {
                 ModelState.AddModelError("", error.Description);
             }
-            return BadRequest(dto);
+            return BadRequest(new ResultDto<UserCreateDto>(false, "Ugursuz cehd",dto));
         }
 
         [HttpGet]
         public async Task<IActionResult> VerifyEmail(string userId, string token)
         {
-            if (userId == null || token == null) return BadRequest();
+            if (userId == null || token == null) return BadRequest(new ResultDto<UserCreateDto>(false, "Token və user boşdur.",null));
             AppUser? user = await _userManager.FindByIdAsync(userId);
 
-            if (user is null) return BadRequest();
+            if (user is null) return BadRequest(new ResultDto<UserCreateDto>(false, "Token boşdur.", null));
             await _userManager.ConfirmEmailAsync(user, token);
 
-            return Ok();
+            return Ok(new ResultDto<UserCreateDto>(false, "Uğurla tamamlandı.", null));
         }
         #endregion
 
@@ -96,7 +98,7 @@ namespace Api.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserLoginDto dto)
         {
-            if (!ModelState.IsValid) return BadRequest(dto);
+            if (!ModelState.IsValid) return BadRequest(new ResultDto<UserLoginDto>(false,"Validation error", dto));
 
             AppUser? user = await _userManager.FindByEmailAsync(dto.UsernameorEmail);
             if (user == null)
@@ -105,7 +107,7 @@ namespace Api.Controllers
             if (user == null)
             {
                 ModelState.AddModelError("", "İstifadəçi tapılmadı");
-                return NotFound(dto);
+                return NotFound(new ResultDto<UserLoginDto>(false, "İstifadəçi tapılmadı.",null));
             }
 
             var identity = await _signInManager.PasswordSignInAsync(user, dto.Password, dto.RememberMe, false);
@@ -116,7 +118,7 @@ namespace Api.Controllers
 
                 TokenResponseDto token = _tokenService.GenerateJwtToken(user.UserName, (List<string>)roles);
 
-                if (token == null) return BadRequest("Token null");
+                if (token == null) return BadRequest(new ResultDto<UserLoginDto>(false, "Token boşdur.",null));
 
                 var homeDto = new HomeUserDto
                 {
@@ -126,19 +128,21 @@ namespace Api.Controllers
                     Token = token.Token,
                     ExpireDate = token.ExpireDate
                 };
-                return Ok(homeDto);
+                return Ok(new ResultDto<HomeUserDto>(true,"Ugurlu", homeDto));
             }
             else
             {
                 if (!(await _userManager.IsEmailConfirmedAsync(user)))
                 {
-                    ModelState.AddModelError("", $"Qeydiyyat zamanı daxil etdiyiniz e-poçtu təsdiqləyin." +
+                    //ModelState.AddModelError("", $"Qeydiyyat zamanı daxil etdiyiniz e-poçtu təsdiqləyin." +
+                    //                                $"Əks halda hesaba daxil ola bilməzsiniz." +
+                    //                                $"E-poçt ünvanı: {user.Email}");
+                    return BadRequest(new ResultDto<UserLoginDto>(false, $"Qeydiyyat zamanı daxil etdiyiniz e-poçtu                                                            təsdiqləyin." +
                                                     $"Əks halda hesaba daxil ola bilməzsiniz." +
-                                                    $"E-poçt ünvanı: {user.Email}");
-                    return BadRequest(dto);
+                                                    $"E-poçt ünvanı: {user.Email}",null));
                 }
             }
-            return BadRequest(dto);
+            return BadRequest(new ResultDto<UserLoginDto>(false, "Uğursuz cəhd.", null));
         }
         #endregion
     }

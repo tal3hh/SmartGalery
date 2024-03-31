@@ -24,6 +24,7 @@ C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\Pu
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Abstractions.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.Extensions.DependencyModel.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.Extensions.Identity.Core.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.Extensions.Identity.Stores.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.Extensions.Options.dll
@@ -39,6 +40,15 @@ C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\Pu
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.SqlServer.Server.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Microsoft.Win32.SystemEvents.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\MimeKit.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.AspNetCore.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.Extensions.Hosting.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.Extensions.Logging.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.Formatting.Compact.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.Settings.Configuration.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.Sinks.Console.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.Sinks.Debug.dll
+C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Serilog.Sinks.File.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\HP\Desktop\smartgalery\SmartGalery-basket\RestApi\obj\Release\net7.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerUI.dll

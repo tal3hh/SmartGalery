@@ -116,7 +116,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<RequestResponseMiddleware>();
+app.UseMiddleware<DashExcepMiddleware>();
 
 app.UseStaticFiles();
 app.UseRouting();

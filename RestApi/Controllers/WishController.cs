@@ -1,8 +1,6 @@
 ﻿using DomainLayer.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Contexts;
 using ServiceLayer.Dtos.Wish;
@@ -10,7 +8,7 @@ using ServiceLayer.ViewModels;
 
 namespace Api.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class WishController : ControllerBase
@@ -36,23 +34,21 @@ namespace Api.Controllers
             if (product == null) return NotFound("Məhsul tapılmadı.");
 
             Wish? wish = await _context.Wishes.Where(x => x.ProductId == vm.ProductId).SingleOrDefaultAsync();
-            if (wish is null)
-            {
-                Wish newWish = new Wish
-                {
-                    AppUserId = user.Id,
-                    ProductId = vm.ProductId
-                };
-
-                await _context.Wishes.AddAsync(newWish);
-                await _context.SaveChangesAsync();
-            }
-            else
+            if (wish != null)
             {
                 _context.Wishes.Remove(wish);
                 await _context.SaveChangesAsync();
+                return Ok("Məhsul silindi.");
             }
 
+            Wish newWish = new Wish
+            {
+                AppUserId = user.Id,
+                ProductId = vm.ProductId
+            };
+
+            await _context.Wishes.AddAsync(newWish);
+            await _context.SaveChangesAsync();
             return Ok("Əlavə olundu.");
         }
 

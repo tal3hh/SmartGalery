@@ -8,6 +8,7 @@ namespace ServiceLayer.Dtos.Basket
 {
     public class HomeBasketDto
     {
+        public int productId { get; set; }
         public string? ProductPath { get; set; }
         public string? About { get; set; }
         public decimal Price { get; set; }

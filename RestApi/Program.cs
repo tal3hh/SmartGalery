@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Contexts;
-using RepositoryLayer.UniteOfWork;
 using Serilog;
 using ServiceLayer.Extension;
 using ServiceLayer.Mapping;
@@ -29,6 +28,26 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
+#region JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audince"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+
+        ClockSkew = TimeSpan.Zero  // remove delay of token when expire
+    };
+});
+#endregion
 
 #region Identity
 
@@ -50,27 +69,6 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
 
 }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
-#endregion
-
-#region JWT
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(cfg =>
-{
-    cfg.RequireHttpsMetadata = false;
-    cfg.SaveToken = true;
-    cfg.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audince"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-
-        ClockSkew = TimeSpan.Zero  // remove delay of token when expire
-    };
-});
 #endregion
 
 #region Cookie
@@ -117,13 +115,15 @@ var app = builder.Build();
 //{
 
 //}
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseHttpsRedirection();
 
-//app.UseMiddleware<RequestResponseMiddleware>();
+app.UseCors(x=> x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+app.UseMiddleware<WebExcepMiddleware>();
 
 app.UseStaticFiles();
 app.UseRouting();

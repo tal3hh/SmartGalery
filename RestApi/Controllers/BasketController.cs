@@ -21,6 +21,7 @@ namespace Api.Controllers
             _userManager = userManager;
         }
 
+
         //CARD sehifesine getdikde cixan basketler
         [HttpPost("Baskets")]
         public async Task<IActionResult> Baskets(string username)
@@ -47,6 +48,7 @@ namespace Api.Controllers
                         product => product.Id,
                         (basket, product) => new HomeBasketDto
                         {
+                            productId = product.Id,
                             ProductPath = product.ProductImages?.FirstOrDefault()?.Path,
                             About = product.About,
                             Price = product.Price,
@@ -60,6 +62,7 @@ namespace Api.Controllers
 
             return Ok("Səbət boşdur.");
         }
+
 
         //Basketden product sayini artirmaq
         [HttpPost("ManyBasketAdd")]
@@ -126,6 +129,7 @@ namespace Api.Controllers
                 return Ok("Məhsul səbətdən silindi.");
             }
         }
+
 
         //Bu action sadece productun uzerine vurduqda isliyecek (+1)
         [HttpPost("OneBasketAdd")]

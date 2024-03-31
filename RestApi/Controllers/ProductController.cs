@@ -37,7 +37,10 @@ namespace Api.Controllers
         [HttpPost("HomeProductDetail/{productId}")]
         public async Task<IActionResult> HomeProductDetail(int productId)
         {
-            return Ok(await _ProductService.ProductDetailPage(productId));
+            var product = await _ProductService.ProductDetailPage(productId);
+            if (product == null) return NotFound("Məhsul tapılmadı.");
+
+            return Ok(product);
         }
     }
 }
